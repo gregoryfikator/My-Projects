@@ -1,0 +1,118 @@
+0	01	0		25	0	0		0	0	0		0	0	0		0		0		0		0		0	0		0	0		0	0		0		0		210			2
+Small Healing Potion
+Type: Useable
++ 25 Health
+
+0	02	0		100	0	0		0	0	0		0	0	0		0		0		0		0		0	0		0	0		0	0		0		0		210			2
+Medium Healing Potion
+Type: Useable
++ 100 Health
+
+0	03	0		250	0	0		0	0	0		0	0	0		0		0		0		0		0	0		0	0		0	0		0		0		210			2
+Large Healing Potion
+Type: Useable
++ 250 Health
+
+0	04	0		0	0	0		25	0	0		0	0	0		0		0		0		0		0	0		0	0		0	0		0		0		210			2
+Small Energy Potion
+Type: Useable
++ 25 Energy
+
+0	05	0		0	0	0		100	0	0		0	0	0		0		0		0		0		0	0		0	0		0	0		0		0		210			2
+Medium Energy Potion
+Type: Useable
++ 100 Energy
+
+0	06	0		0	0	0		250	0	0		0	0	0		0		0		0		0		0	0		0	0		0	0		0		0		210			2
+Large Energy Potion
+Type: Useable
++ 250 Energy
+
+0	07	0		0	0	0		25	0	0		0	0	0		0		0		0		0		0	0		0	0		0	0		0		0		210			2
+Small Mana Potion
+Type: Useable
++ 25 Mana
+
+0	08	0		0	0	0		100	0	0		0	0	0		0		0		0		0		0	0		0	0		0	0		0		0		210			2
+Medium Mana Potion
+Type: Useable
++ 100 Mana
+
+0	09	0		0	0	0		250	0	0		0	0	0		0		0		0		0		0	0		0	0		0	0		0		0		210			2
+Large Mana Potion
+Type: Useable
++ 250 Mana
+
+10	1001	0		0	0	0		-5	0	0		0	0	0		0		0		0		0		0	0		0	0		0	0		0		0		190			3
+Normal Attack
+Type: Attack
+Deals 100% of basic damage.
+Energy cost: 5
+
+10	1002	1		0	0	0		-15	0	0		0	0	0		1.5		0		0		0		0	0		0	0		0	0		42		0		230			4
+Heavy Strike
+Type: Attack
+Deals 250% of basic damage.
+Energy cost: 15
+Cooldown: 1 round
+
+10	1003	0		0	0	0		-5	0	0		0	0	0		-0.5		0		0		0		0	0		0	0		1	0		84		0		230			4
+Quick Attack
+Type: Attack
+Deals 50% of basic damage.
+Cannot be blocked.
+Energy cost: 5
+
+10	1004	2		0	0	0		-20	0	0		0	0	0		0.5		0		0		0		0	0		0.25	3		0	0		126		0		300			5
+Puncture
+Type: Attack
+Deals 150% of basic damage.
+25% chance to cause bleeding for 3 round.
+Energy cost: 20
+Cooldown: 2 rounds
+
+11	1005	4		0	0	0		-30	0	0		0	0	0		0.5		3		0		0		0.33333	3		0	0		0	0		168		0		260			5
+Blessed Blade
+Type: Buff
+Deals 150% of basic damage for 3 round.
+33.3% chance to perform double strike for 3 round.
+Energy cost: 30
+Cooldown: 4 rounds
+
+11	1006	5		0	0	0		-20	0	0		0	0	0		0		0		-0.25		3		0	0		0	0		0	0		0		42		180			5
+Inhuman Vitality
+Type: Buff
+Regenerate 25% of maximum health for 4 rounds.
+Regenerate 25% of maximum energy for 4 rounds.
+Energy cost: 20
+Cooldown: 5 rounds
+
+11	1007	4		0	0	0		-20	0	0		0	0	0		0		0		-0.25		3		0	0		0	0		0	0		42		42		180			4
+Armoured
+Type: Buff
+Reduces 25% of taken damage for 3 round.
+Energy cost: 20
+Cooldown: 4 rounds
+
+11	1008	4		0	0	0		-30	0	0		0	0	0		0		0		0		0		0.25	3		0	0		1	0		84		42		358			6
+Guardian
+Type: Buff
+25% chance to perform counter attack for 3 rounds.
+Counter attack is randomly selected from 3 main attacks.
+Cannot be blocked.
+Energy cost: 30
+Cooldown: 4 rounds
+
+12	1009	3		0	0	0		-20	0	0		0	0	0		-0.25		3		0		0		0	0		0	0		0	0		126		42		250			4
+Howl
+Type: Debuff
+Reduces 25% of enemy damage for 3 round.
+Energy cost: 20
+Cooldown: 3 rounds
+
+13	1010	0		0	0	0		-10	0	0		0	0	0		-0.25		3		0		0		0	0		0	0		0	1		126		42		250			4
+Escape
+Type: Common
+Try to escape from the fight.
+Success chance depends on left health points.
+Energy cost: 10

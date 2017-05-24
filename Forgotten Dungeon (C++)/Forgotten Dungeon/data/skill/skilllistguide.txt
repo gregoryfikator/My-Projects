@@ -1,0 +1,1 @@
+flag	ID	cooldown	hp	hpReg	hpRegDur	emp	empReg	empRegDur	def	defMul	defMulDur	dmgGivenX	dmgGivenXDur	dmgTakenX	dmgTakenXDur	2xHit%	2xHitDur	bleed%	bleedDur	unblock	fallback	bmpXoffset	bmpYoffset	descritptionFrameX	descriptionLines

@@ -1,0 +1,1 @@
+flag 	ID	lvl 	rarity 	hp 	emp 	str 	dur 	dex 	agi 	wis 	chr 	dmg_min dmg_max def 	descritptionFrameX	descriptionLines
