@@ -69,4 +69,5 @@ public:
 	// Stats *getStats() { return stats; }
 
 	friend class Hero;
+	friend class ManagerItem;
 };

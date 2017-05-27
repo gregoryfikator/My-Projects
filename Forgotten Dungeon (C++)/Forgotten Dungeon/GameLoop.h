@@ -3,6 +3,7 @@
 #include "ALLEGRO_Init.h"
 #include "ALLEGRO_Font.h"
 #include "MainMenu.h"
+#include "Resources.h"
 #include "Hero.h"
 #include "ManagerLocation.h"
 #include "ManagerItem.h"
@@ -33,17 +34,7 @@ class GameLoop
 		SUKCESYWNIE ROZSZERZAC LISTE WSKAZNIKOW NA OBIEKTY WRAZ Z DODAWANIEM TYPOW
 	*/
 
-	ALLEGRO_BITMAP		*background;
-	ALLEGRO_BITMAP		*cursor;
-	ALLEGRO_BITMAP		*heroWarrior;
-	ALLEGRO_BITMAP		*heroWizard;
-
-	ALLEGRO_BITMAP		*ui_eq;
-	ALLEGRO_BITMAP		*ui_eq_list;
-	ALLEGRO_BITMAP		*ui_eq_wear;
-	ALLEGRO_BITMAP		*ui_xp_bar;
-	ALLEGRO_BITMAP		*ui_quick;
-	ALLEGRO_BITMAP		*ui_bin;
+	Resources			*resources;
 
 	// pointers to objects
 	ALLEGRO_Init		*allegro_init;

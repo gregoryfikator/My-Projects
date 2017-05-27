@@ -3,6 +3,7 @@
 
 //#include <allegro5\allegro.h>
 #include <vector>
+#include <list>
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
@@ -11,7 +12,7 @@
 
 class ManagerItem : public Manager
 {
-	vector<Item *> *itemList;
+	list<Item *> *itemList;
 
 public:
 	virtual void Init(string itemFile = "data//item//itemlist.txt")
@@ -54,7 +55,7 @@ public:
 
 		if (File.good())
 		{
-			itemList = new vector<Item *>;
+			itemList = new list<Item *>;
 			while (File >> flag >> ID >> lvl >> rarity >> hp >> emp >> str >> dur >> dex >> agi >> wis >> chr >> dmg_min >> dmg_max >> def >> descritptionFrameX >> descriptionLines)
 			{
 				string tmp;
@@ -105,11 +106,54 @@ public:
 		// zaladowac z pliku itemy do listy, brac pod uwage flagi przedmiotow przy tworzeniu nowych obiektów
 		// flagi moga byc nie potrzebne dziêki u¿yciu RTTI
 	}
+
+	virtual void Draw(Hero *hero, Resources *resources, ALLEGRO_Font *allegro_font)
+	{
+		// rysowanie ekwipunku
+		al_draw_filled_rectangle(0, 0, 720, 480, al_map_rgba(0, 0, 0, 175));
+		al_draw_bitmap(resources->ui_eq, 30, 43, 0);
+		al_draw_filled_rounded_rectangle(282, 341, 282 + 20, 362, 2, 2, al_map_rgb(45, 210, 55)); //al_draw_filled_rounded_rectangle(282, 341, 282 + x_percent_part, 362, 2, 2, al_map_rgb(45, 210, 55));
+		al_draw_bitmap(resources->ui_xp_bar, 259, 305, 0);
+
+		// efekt podswietlenia t³a przedmiotow w ekwipunku - realizowany w metodzie DrawItemsFromBackpack()
+
+		this->DrawItemsFromBackpack(hero);
+
+		// tutaj powinny byc rysowane efekty takie jak przyciemnienie przedmiotow w ekwipunku
+
+		al_draw_bitmap(resources->ui_eq_list, 64, 107, 0);
+		al_draw_bitmap(resources->ui_eq_wear, 258, 107, 0);
+
+		//if (debugModeOn) // docelowo kosz staje sie aktywny i mozna usunac przedmiot gdy zostanie zaznaczony
+			al_draw_bitmap(resources->ui_bin, 53, 379, 0);
+	}
+
+	static void DrawItemsFromBackpack(Hero *hero)
+	{
+		int slot = 0;
+		int slotX = 71;
+		int slotY = 113;
+
+		for (int j = 0; j < 5; j++, slotY += 43, slotX = 71)
+		{
+			for (int k = 0; k < 4; k++, slot++, slotX += 43)
+			{
+				if (hero->eq[slot] != nullptr)
+				{
+					if (hero->eq[slot]->selected)
+						al_draw_filled_rounded_rectangle(slotX - 2, slotY - 1, slotX + 43, slotY + 43, 8, 8, al_map_rgb(30, 255, 30));
+
+					al_draw_scaled_bitmap(hero->eq[slot]->bmp, 0, 0, al_get_bitmap_width(hero->eq[slot]->bmp), al_get_bitmap_height(hero->eq[slot]->bmp), slotX, slotY, 42, 42, 0);
+				}
+			}
+		}
+	}
+
 	Item DropItem() //metoda losuje przedmiot zdobywany po pokonaniu przeciwnika
 	{
 		int stop = rand() % itemList->size();
 		int i = 0;
-		for (vector<Item *>::iterator it = itemList->begin() ; it != itemList->end(); it++, i++)
+		for (list<Item *>::iterator it = itemList->begin() ; it != itemList->end(); it++, i++)
 			if (i == stop)
 				return **it;
 	} 

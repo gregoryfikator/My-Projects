@@ -30,17 +30,7 @@ GameLoop::GameLoop(int ScreenWidth_new, int ScreenHeight_new)
 	al_register_event_source(event_queue, al_get_display_event_source(window));
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 
-	background = al_load_bitmap("data//textures//menu.png");
-	cursor = al_load_bitmap("data//textures//cursor.png");
-	heroWarrior = al_load_bitmap("data//textures//war.jpg");
-	heroWizard = al_load_bitmap("data//textures//wiz.jpg");
-
-	ui_eq = nullptr;
-	ui_eq_list = nullptr;
-	ui_eq_wear = nullptr;
-	ui_xp_bar = nullptr;
-	ui_quick = nullptr;
-	ui_bin = nullptr;
+	resources = new Resources();
 
 	redraw = false;
 	heroClass = true;
@@ -50,7 +40,7 @@ GameLoop::GameLoop(int ScreenWidth_new, int ScreenHeight_new)
 	itemManager = nullptr;
 	skillManager = nullptr;
 
-	mainmenu		= new MainMenu(event_queue, allegro_font, background, cursor, heroWarrior, heroWizard);
+	mainmenu		= new MainMenu(event_queue, allegro_font, resources->background, resources->cursor, resources->heroWarrior, resources->heroWizard);
 	
 	STEP			= 3;
 
@@ -126,8 +116,6 @@ void GameLoop::GameMenu()
 			PLAY_GAME = false;
 		}
 	} while (!QUIT_GAME);
-
-	//delete this;
 }
 
 bool GameLoop::InitResources()
@@ -143,23 +131,20 @@ bool GameLoop::InitResources()
 	skillManager = new ManagerSkill();
 	skillManager->Init();
 
-	hero = new Hero(outerCharacterName, heroClass, "projekt//characters//sprite//test.png", ScreenWidth / 2, ScreenHeight / 2);
-	
+	if (heroClass)
+		hero = new Hero(outerCharacterName, heroClass, "projekt//characters//sprite//test.png", ScreenWidth / 2, ScreenHeight / 2, resources->heroWarrior);
+	else
+		hero = new Hero(outerCharacterName, heroClass, "projekt//characters//sprite//test.png", ScreenWidth / 2, ScreenHeight / 2, resources->heroWizard);
 	
 	for (int i = 0; i < 20; i++)
 		hero->AssignNewItem(new Item(itemManager->DropItem()));
 
-	this->ui_eq = al_load_bitmap("data//textures//ui_eq.png");
-	this->ui_eq_list = al_load_bitmap("data//textures//ui_eq_list.png");
-	this->ui_eq_wear = al_load_bitmap("data//textures//ui_eq_wear.png");
-	this->ui_quick = al_load_bitmap("data//textures//ui_quick.png");
-	this->ui_xp_bar = al_load_bitmap("data//textures//ui_xp_bar.png");
-	this->ui_bin = al_load_bitmap("data//textures//ui_bin.png");
-
 	/*
 	TO DO:
-	- widok ekwipunku bohatera z oskryptowaniem
-	- umiejêtnoœci, widok okna umiejêtnoœci
+	- oskryptowanie ekwipunku
+	- oskryptowanie okna umiejetnosci
+	- ^^^^^^^^^^^^^ 1. informacje po najechaniu kursorem
+	- ^^^^^^^^^^^^^ 2. mozliwosc przerzucania przedmiotow miedzy slotami, umiejetnosci na pasek szybkiego dostepu
 	- HUD: panele z guzikami (do w³¹czania ekwipunku, okna statystyk, okna menu), panel podgl¹du postaci, panel podgl¹du przeciwnika/NPC po najechaniu kursorem
 	*/
 
@@ -220,31 +205,12 @@ bool GameLoop::GamePlay()
 				redraw = false;
 				locationManager->DrawCurrentLocation();
 				hero->DrawCharacter();
-				this->DrawHud();
+				DrawHud();
 
 				if (openEquipment == true)
-				{
-					// rysowanie ekwipunku
-					al_draw_filled_rectangle(0, 0, 720, 480, al_map_rgba(0, 0, 0, 175));
-					al_draw_bitmap(ui_eq, 30, 43, 0);
-					al_draw_filled_rounded_rectangle(282, 341, 282 + 20, 362, 2, 2, al_map_rgb(45, 210, 55)); //al_draw_filled_rounded_rectangle(282, 341, 282 + x_percent_part, 362, 2, 2, al_map_rgb(45, 210, 55));
-					al_draw_bitmap(ui_xp_bar, 259, 305, 0);
-
-					// tutaj powinny byc rysowane efekty jak podswietlenie czy przyciemnienie przedmiotow w ekwipunku
-
-					hero->DrawItemsFromBackpack();
-
-					al_draw_bitmap(ui_eq_list, 64, 107, 0);
-					al_draw_bitmap(ui_eq_wear, 258, 107, 0);
-
-					if (debugModeOn) // docelowo kosz staje sie aktywny i mozna usunac przedmiot gdy zostanie zaznaczony
-						al_draw_bitmap(ui_bin, 53, 379, 0);
-
-				}
+					itemManager->Draw(hero, resources, allegro_font);
 				else if (openSkillTab == true)
-				{
-					// rysowanie okna umiejêtnoœci
-				}
+					skillManager->Draw(hero, resources, allegro_font);
 
 				if (debugModeOn == true)	// wlaczenie trybu debugowania wyswietla wspolrzedne postaci oraz kursora
 				{
@@ -256,7 +222,7 @@ bool GameLoop::GamePlay()
 					al_draw_textf(allegro_font->font20, al_map_rgb(139, 0, 0), 630, 105, 0, "My1 = %3d", MouseY);
 				}
 
-				al_draw_bitmap(cursor, MouseX, MouseY, 0);
+				al_draw_bitmap(resources->cursor, MouseX, MouseY, 0);
 
 				al_flip_display(); // wyœwietlenie aktualnego bufora na ekran
 				al_clear_to_color(al_map_rgb(0, 0, 0)); // wyczyszczenie aktualnego bufora ekranu
@@ -329,5 +295,5 @@ void GameLoop::DrawHud()
 {
 	al_draw_filled_rounded_rectangle(5, 420, 60, 475, 8, 8, al_map_rgba(0, 0, 0, 75));
 	al_draw_rounded_rectangle(5, 420, 60, 475, 8, 8, al_map_rgba(0, 0, 0, 175), 2.5);
-	al_draw_bitmap(ui_quick, 167, 422, 0);
+	al_draw_bitmap(resources->ui_quick, 167, 422, 0);
 }

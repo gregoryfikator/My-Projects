@@ -13,10 +13,10 @@ using namespace std;
 
 int main()
 {
-	GameLoop *game = new GameLoop(720, 480);
-	game->GameMenu();
+	GameLoop *gameLoop = new GameLoop(720, 480);
+	gameLoop->GameMenu();
 
-	delete game;
+	delete gameLoop;
 	return 0;
 }
 

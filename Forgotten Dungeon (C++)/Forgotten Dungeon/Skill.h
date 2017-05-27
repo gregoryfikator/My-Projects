@@ -47,4 +47,6 @@ public:
 
 		stats = new StatsSkill(hp_, hpRegen_, hpRegenDuration_, emp_, empRegen_, empRegenDuration_, def_, defMultipler_, defMultiplerDuration_, dmgGivenMultipler_, dmgGivenMultiplerDuration_, dmgTakenMultipler_, dmgTakenMultiplerDuration_, doubleStrikeChance_, doubleStrikeDuration_, bleedingChance_, bleedingDuration_, unblockable_, fallback_);
 	}
+
+	friend class ManagerSkill;
 };
