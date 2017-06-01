@@ -139,11 +139,62 @@ public:
 		return nullptr;
 	}
 
+	Item * GetItemFromEquipment(int index)
+	{
+		if (index >= 0 && index < 7)
+			return eqWorn[index];
+		return nullptr;
+	}
+
+	void SwapItems(Item *&Swap1, Item *&Swap2, int indexTo, int indexFrom)
+	{
+		Item*tmp = Swap2;
+		eq[indexTo] = Swap1;
+		eq[indexFrom] = tmp;
+	}
+	void SwapItems2(Item *&Swap1, Item *&Swap2, int indexTo, int indexFrom) //funkcja dla przenoszenia pierscieni pomiedzy lewa a prawa reka
+	{
+		Item*tmp = Swap2;
+		eqWorn[indexTo] = Swap1;
+		eqWorn[indexFrom] = tmp;
+	}
+	void SwapItems(Item *&Swap1, Item *&Swap2, int indexTo, int indexFrom, bool ToWear)
+	{
+		Item*tmp = Swap2;
+		if (ToWear)
+		{
+			eqWorn[indexTo] = Swap1;
+			eq[indexFrom] = tmp;
+		}
+		else
+		{
+			eq[indexTo] = Swap1;
+			eqWorn[indexFrom] = tmp;
+		}
+	}
+	
+
 	void SwapWithEmpty(Item *&toSwap, int indexTo, int indexFrom)
 	{
 		eq[indexTo] = toSwap;
 		eq[indexFrom] = nullptr;
 		eq[indexTo]->selected = false;
+	}
+
+	void SwapWithEmpty(Item *&toSwap, int indexTo, int indexFrom, bool wearing)
+	{
+		if (wearing)
+		{
+			eqWorn[indexTo] = toSwap;
+			eq[indexFrom] = nullptr;
+			eqWorn[indexTo]->selected = false;
+		}
+		else
+		{
+			eq[indexTo] = toSwap;
+			eqWorn[indexFrom] = nullptr;
+			eq[indexTo]->selected = false;
+		}
 	}
 
 	friend class ManagerItem;

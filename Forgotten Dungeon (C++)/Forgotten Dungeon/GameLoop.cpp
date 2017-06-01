@@ -122,7 +122,7 @@ void GameLoop::GameMenu()
 
 bool GameLoop::InitResources()
 {
-	srand(time(NULL));
+	srand(time(nullptr));
 	// TUTAJ BEDA WYKORZYSTYWANE WATKI
 	locationManager = new ManagerLocation();
 	locationManager->Init("data//location//village001.jpg", "data//location//village001");
@@ -226,11 +226,15 @@ bool GameLoop::GamePlay()
 
 				if (openEquipment == true)
 				{
-					itemManager->CheckCursorOverlayAndClick(MouseX, MouseY, hero, mouseLBPressed);
+					itemManager->CheckCursorOverlayBackpackAndClick(MouseX, MouseY, hero, mouseLBPressed);
+					itemManager->CheckCursorOverlayWearingAndClick(MouseX, MouseY, hero, mouseLBPressed);
 
 					itemManager->Draw(hero, resources, allegro_font);
 					//wyswietlanie opisu przedmiotu po najechaniu kursorem
-					itemManager->DrawDescription(MouseX, MouseY, hero->GetItemFromBackpack(itemManager->GetOverlayedItemIndex()), allegro_font);
+					if (itemManager->GetOverlayBackpack())
+						itemManager->DrawDescription(MouseX, MouseY, hero->GetItemFromBackpack(itemManager->GetOverlayedItemIndex()), allegro_font);
+					else
+						itemManager->DrawDescription(MouseX, MouseY, hero->GetItemFromEquipment(itemManager->GetOverlayedItemIndex()), allegro_font);
 				}
 				else if (openSkillTab == true)
 				{
