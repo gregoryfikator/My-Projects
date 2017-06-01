@@ -38,9 +38,38 @@ public:
 	int chr;
 };
 
-class StatsHero
+class StatsHero : public Stats
 {
 public:
+	StatsHero(float hp_, float emp_, float dmg_min_, float dmg_max_, unsigned int def_, int str_, int dur_, int dex_, int agi_, int wis_, int chr_, bool heroClass): Stats(hp_, emp_, dmg_min_, dmg_max_, def_, str_, dur_, dex_, agi_, wis_, chr_)
+	{
+		str_eq = str_;
+		dur_eq = dur_;
+		dex_eq = dex_;
+		agi_eq = agi_;
+		wis_eq = wis_;
+		chr_eq = chr_;
+
+		// bazowe mno¿niki statystyk zale¿ne od klasy postaci
+		if (heroClass)
+		{
+			str_b = 1.5;
+			dur_b = 1.5;
+			dex_b = 1;
+			agi_b = 1;
+			wis_b = 0;
+			chr_b = 1;
+		}
+		else
+		{
+			str_b = 0;
+			dur_b = 0;
+			dex_b = 1;
+			agi_b = 1.5;
+			wis_b = 2;
+			chr_b = 1.5;
+		}
+	}
 	// statystyki z za³o¿onym ekwipunkiem
 	int str_eq;
 	int dur_eq;

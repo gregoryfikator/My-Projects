@@ -2,6 +2,7 @@
 #include "Character.h"
 #include "Item.h"
 #include "Skill.h"
+#include <fstream>
 
 class Hero :public Character
 {
@@ -16,7 +17,7 @@ class Hero :public Character
 
 	
 public:
-	Hero(string newName, bool newHeroClass, string newBMP, int startPointX, int startPointY, ALLEGRO_BITMAP *newHeroPortrait) : Character(newName, newBMP, startPointX, startPointY)
+	Hero(string newName, bool newHeroClass, string newBMP, int startPointX, int startPointY, ALLEGRO_BITMAP *newHeroPortrait, bool loadGame) : Character(newName, newBMP, startPointX, startPointY)
 	{
 		for (int i = 0; i < 20; i++)
 			eq[i] = nullptr;
@@ -28,7 +29,87 @@ public:
 
 		heroClass = newHeroClass;
 		heroPortrait = newHeroPortrait;
-		heroStats = nullptr;
+
+		//if(loadGame)
+		//{
+		//	string name; // char * nazwa;
+		//	vector <string>* description; // char *description[10];
+		//	short int descriptionLines;
+		//	short int descritptionFrameX; // int frame_x;
+		//	short int descriptionFrameY; // int frame_y;
+
+		//	short int ID;
+		//	short int flag;	// mo¿e byæ nie potrzebne dziêki u¿yciu RTTI
+		//	short int rarity;
+		//	short int lvl;
+
+		//	string pathFile = "saves//" + GetName() + ".sav";
+
+		//	float dmg_min;
+		//	float dmg_max;
+
+		//	unsigned int def;
+
+		//	float hp;	// punkty zdrowia
+		//	float emp;	// punkty energii lub many w zale¿noœci od klasy postaci
+
+		//	int str;
+		//	int dur;
+		//	int dex;
+		//	int agi;
+		//	int wis;
+		//	int chr;
+
+		//	//bmp = al_load_bitmap(bmpFile.c_str());
+		//	description = new vector<string>;
+		//	fstream File;
+		//	//stringstream ss;
+
+		//	File.open(pathFile.c_str(), ios::in);
+
+		//	if (File.good())
+		//	{
+		//		itemList = new list<Item *>;
+		//		while (File >> flag >> ID >> lvl >> rarity >> hp >> emp >> str >> dur >> dex >> agi >> wis >> chr >> dmg_min >> dmg_max >> def >> descritptionFrameX >> descriptionLines)
+		//		{
+		//			string tmp;
+
+		//			descriptionFrameY = 32 + 16 * descriptionLines;
+
+		//			getline(File, tmp);
+		//			getline(File, name);
+
+		//			for (int i = 0; i < descriptionLines; i++)
+		//			{
+		//				getline(File, tmp);
+		//				description->push_back(tmp);
+		//			}
+		//			ss << ID;
+		//			tmp = ss.str();
+		//			bmpPath = "data//item//bmp//" + tmp + ".png";
+		//			ss.str("");
+
+		//			
+		//			description = new vector<string>;
+		//		}
+		//		File.close();
+		//	}
+
+
+
+		//}
+		//else
+		//{
+			if (heroClass)
+			{
+				heroStats = new StatsHero(50, 25, 0, 2, 0, 30, 30, 25, 25, 25, 25, heroClass);
+			}
+			else
+			{
+				heroStats = new StatsHero(30, 50, 0, 2, 0, 25, 25, 25, 30, 35, 30, heroClass);
+			}
+		//}
+
 	}
 
 	ALLEGRO_BITMAP * getPortrait()
@@ -51,5 +132,20 @@ public:
 		return false;
 	}
 
+	Item * GetItemFromBackpack(int index)
+	{
+		if(index >= 0 && index < 20)
+			return eq[index];
+		return nullptr;
+	}
+
+	void SwapWithEmpty(Item *&toSwap, int indexTo, int indexFrom)
+	{
+		eq[indexTo] = toSwap;
+		eq[indexFrom] = nullptr;
+		eq[indexTo]->selected = false;
+	}
+
 	friend class ManagerItem;
+	friend class ManagerSkill;
 };

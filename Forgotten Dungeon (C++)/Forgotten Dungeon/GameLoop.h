@@ -22,6 +22,8 @@ class GameLoop
 
 
 	// pressed key id
+	int			mouseButtonPressedID;
+	bool		mouseLBPressed;
 	int			keyboardKeyPressedID;
 
 	// flags
@@ -42,7 +44,6 @@ class GameLoop
 	ALLEGRO_DISPLAY		*window;
 	ALLEGRO_TIMER		*timer;
 	ALLEGRO_EVENT_QUEUE *event_queue;
-	//Resources			*res;
 	MainMenu			*mainmenu;
 
 	string				outerCharacterName;

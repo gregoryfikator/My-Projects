@@ -54,7 +54,7 @@ public:
 
 	void	GetEvents();
 	int		ProceedEventsMainMenu();
-	int		ProceedEventsCharacterSelectionMenu(string outerCharacterName, bool *heroClass);
+	int		ProceedEventsCharacterSelectionMenu(string *outerCharacterName, bool *heroClass);
 
 	void	LoadCharacterSelectionMenu();
 	void	DrawCharacterSelectionMenu();

@@ -10,10 +10,19 @@ using namespace std;
 class ManagerSkill
 {
 	vector<Skill *> *skillList;
+	int overlayedSkillIndex;
+	int selectedSkillIndex;
+	enum PositionToDrawDescription
+	{
+		NONE, RIGHT, MIDDLE, LEFT
+	} position;
 
 public:
 	virtual void Init(string itemFile = "data//skill//skilllist.txt")
 	{
+		overlayedSkillIndex = -1;
+		selectedSkillIndex = -1;
+
 		short int flag;	// mo¿e byæ nie potrzebne dziêki u¿yciu RTTI
 		short int ID;	
 		short int cooldown;
@@ -53,7 +62,7 @@ public:
 		short int descriptionLines;
 		
 		string name; // char * nazwa;
-		vector <string>* description = new vector<string>; // char *description[10];
+		vector <string> *description = new vector<string>; // char *description[10];
 
 		string bmpPath;
 		ALLEGRO_BITMAP *bmpMain = al_load_bitmap("data//skill//bmp//skillTable.png");
@@ -197,10 +206,336 @@ public:
 			al_draw_filled_rectangle(610, 270, 652, 312, al_map_rgba(0, 0, 0, 210));// RYSUJ CIEN
 
 		////////////////////////////////////////////------------//////////////////////////////////////////////////
-		al_draw_textf(allegro_font->font12, al_map_rgb(255, 255, 255), 362, 405, ALLEGRO_ALIGN_CENTRE, "Select skill for #%d slot", 0);
+		//al_draw_textf(allegro_font->font12, al_map_rgb(255, 255, 255), 362, 405, ALLEGRO_ALIGN_CENTRE, "Select skill for #%d slot", 0);
 
 
 
 	}
 
+	Skill *GetSkill()
+	{
+		if (overlayedSkillIndex != -1)
+			return skillList->at(overlayedSkillIndex);
+		return nullptr;
+	}
+
+	int GetDescriptionDrawPosition() { return position; }
+
+	void DrawDescription(int mouseX, int mouseY, Skill *skill, ALLEGRO_Font *fonts, int y = 34)
+	{
+		if (skill != nullptr)
+		{
+			if (position == 1) // draw to right side of cursor
+			{
+				al_draw_filled_rounded_rectangle(mouseX, mouseY - skill->descriptionFrameY, mouseX + skill->descriptionFrameX, mouseY, 8, 8, fonts->TRANSPARENT_BLACK5);
+				al_draw_rounded_rectangle(mouseX, mouseY - skill->descriptionFrameY, mouseX + skill->descriptionFrameX, mouseY, 8, 8, fonts->TRANSPARENT_BLACK6, 2.5);
+				al_draw_textf(fonts->font20, fonts->LIGHT_YELLOW, mouseX + skill->descriptionFrameX / 2, mouseY + 5 - skill->descriptionFrameY, ALLEGRO_ALIGN_CENTRE, "%s", skill->name.c_str());
+
+				for (int i = 0; i < skill->description.size(); i++)
+				{
+					al_draw_textf(fonts->font12, fonts->WHITE, mouseX + skill->descriptionFrameX / 2, mouseY + y - skill->descriptionFrameY, ALLEGRO_ALIGN_CENTRE, skill->description[i].c_str());
+					y += 16;
+				}
+				if (skill->flag == 0)
+					al_draw_textf(fonts->font12, fonts->WHITE, mouseX + skill->descriptionFrameX / 2, mouseY + y - skill->descriptionFrameY, ALLEGRO_ALIGN_CENTRE, "Quantity: %d", skill->quantity);
+			}
+			else if (position == 3) // draw to left side of cursor
+			{
+				al_draw_filled_rounded_rectangle(mouseX - skill->descriptionFrameX, mouseY - skill->descriptionFrameY, mouseX, mouseY, 8, 8, fonts->TRANSPARENT_BLACK5);
+				al_draw_rounded_rectangle(mouseX - skill->descriptionFrameX, mouseY - skill->descriptionFrameY, mouseX, mouseY, 8, 8, fonts->TRANSPARENT_BLACK6, 2.5);
+				al_draw_textf(fonts->font20, fonts->LIGHT_YELLOW, mouseX - skill->descriptionFrameX / 2, mouseY + 5 - skill->descriptionFrameY, ALLEGRO_ALIGN_CENTRE, "%s", skill->name.c_str());
+
+				for (int i = 0; i < skill->description.size(); i++)
+				{
+					al_draw_textf(fonts->font12, fonts->WHITE, mouseX - skill->descriptionFrameX / 2, mouseY + y - skill->descriptionFrameY, ALLEGRO_ALIGN_CENTRE, skill->description[i].c_str());
+					y += 16;
+				}
+				if (skill->flag == 0)
+					al_draw_textf(fonts->font12, fonts->WHITE, mouseX - skill->descriptionFrameX / 2, mouseY + y - skill->descriptionFrameY, ALLEGRO_ALIGN_CENTRE, "Quantity: %d", skill->quantity);
+			}
+			else if (position == 2) // draw to both sides of cursor
+			{
+				al_draw_filled_rounded_rectangle(mouseX - skill->descriptionFrameX / 2, mouseY - skill->descriptionFrameY, mouseX + skill->descriptionFrameX / 2, mouseY, 8, 8, fonts->TRANSPARENT_BLACK5);
+				al_draw_rounded_rectangle(mouseX - skill->descriptionFrameX / 2, mouseY - skill->descriptionFrameY, mouseX + skill->descriptionFrameX / 2, mouseY, 8, 8, fonts->TRANSPARENT_BLACK6, 2.5);
+				al_draw_textf(fonts->font20, fonts->LIGHT_YELLOW, mouseX, mouseY + 5 - skill->descriptionFrameY, ALLEGRO_ALIGN_CENTRE, "%s", skill->name.c_str());
+
+				for (int i = 0; i < skill->description.size(); i++)
+				{
+					al_draw_textf(fonts->font12, fonts->WHITE, mouseX, mouseY + y - skill->descriptionFrameY, ALLEGRO_ALIGN_CENTRE, skill->description[i].c_str());
+					y += 16;
+				}
+			}
+		}
+	}
+
+	void CheckCursorOverlayAndClick(int mouseX, int mouseY) // funkcja jest 'nieelegancko' wykonana ze wzgledu na ograniczenia czasowe
+	{
+		//if (mouseX >= 79 && mouseX <= 652 && mouseY >= 130 && mouseY <= 172)
+		//{
+			if (mouseX >= 79 && mouseX <= 121 && mouseY >= 130 && mouseY <= 172)	// 1W-1S - skill nr 10
+			{
+				overlayedSkillIndex = 9;
+				position = RIGHT;
+				//item_skill_description(10, mousex, mousey, potion_skill, y, font20, font12, 1, al_map_rgba(0, 0, 0, 245));
+				//if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				//{
+				//	eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[9];
+				//	ITEM_SELECTED_DOCK = 0;
+				//}
+			}
+			else if (mouseX >= 134 && mouseX <= 176 && mouseY >= 130 && mouseY <= 172)	// 1W-2S - skill nr 11
+			{
+				overlayedSkillIndex = 10;
+				position = RIGHT;
+				//item_skill_description(11, mousex, mousey, potion_skill, y, font20, font12, 1, al_map_rgba(0, 0, 0, 245));
+				//if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				//{
+				//	eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[10];
+				//	ITEM_SELECTED_DOCK = 0;
+				//}
+
+			}
+			else if (mouseX >= 189 && mouseX <= 231 && mouseY >= 130 && mouseY <= 172)	// 1W-3S - skill nr 12
+			{
+				overlayedSkillIndex = 11;
+				position = RIGHT;
+				/*item_skill_description(12, mousex, mousey, potion_skill, y, font20, font12, 1, al_map_rgba(0, 0, 0, 245));
+				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				{
+					eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[11];
+					ITEM_SELECTED_DOCK = 0;
+				}*/
+			}
+			else if (mouseX >= 283 && mouseX <= 325 && mouseY >= 130 && mouseY <= 172)	// 1W-4S - skill nr 14
+			{
+				overlayedSkillIndex = 13;
+				position = MIDDLE;
+				/*item_skill_description(14, mousex, mousey, potion_skill, y, font20, font12, 2, al_map_rgba(0, 0, 0, 245));
+				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				{
+					eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[13];
+					ITEM_SELECTED_DOCK = 0;
+				}*/
+			}
+			else if (mouseX >= 338 && mouseX <= 380 && mouseY >= 130 && mouseY <= 172)	// 1W-5S - skill nr 16
+			{
+				overlayedSkillIndex = 15;
+				position = MIDDLE;
+				/*item_skill_description(16, mousex, mousey, potion_skill, y, font20, font12, 2, al_map_rgba(0, 0, 0, 245));
+				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				{
+					eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[15];
+					ITEM_SELECTED_DOCK = 0;
+				}*/
+			}
+			else if (mouseX >= 393 && mouseX <= 435 && mouseY >= 130 && mouseY <= 172)	// 1W-6S - skill nr 17
+			{
+				overlayedSkillIndex = 16;
+				position = MIDDLE;
+				/*item_skill_description(17, mousex, mousey, potion_skill, y, font20, font12, 2, al_map_rgba(0, 0, 0, 245));
+				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				{
+					eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[16];
+					ITEM_SELECTED_DOCK = 0;
+				}*/
+			}
+			else if (mouseX >= 500 && mouseX <= 542 && mouseY >= 130 && mouseY <= 172)	// 1W-7S - skill nr 1
+			{
+				overlayedSkillIndex = 0;
+				position = LEFT;
+				/*item_skill_description(1, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
+				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				{
+					if (potion_skill[0].quantity > 0)
+					{
+						eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[0];
+						ITEM_SELECTED_DOCK = 0;
+					}
+				}*/
+			}
+			else if (mouseX >= 555 && mouseX <= 597 && mouseY >= 130 && mouseY <= 172)	// 1W-8S - skill nr 2
+			{
+				overlayedSkillIndex = 1;
+				position = LEFT;
+				/*item_skill_description(2, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
+				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				{
+					if (potion_skill[1].quantity > 0)
+					{
+						eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[1];
+						ITEM_SELECTED_DOCK = 0;
+					}
+				}*/
+			}
+			else if (mouseX >= 610 && mouseX <= 652 && mouseY >= 130 && mouseY <= 172)	// 1W-9S - skill nr 3
+			{
+				overlayedSkillIndex = 2;
+				position = LEFT;
+				/*item_skill_description(3, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
+				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				{
+					if (potion_skill[2].quantity > 0)
+					{
+						eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[2];
+						ITEM_SELECTED_DOCK = 0;
+					}
+				}*/
+			}
+		//}
+		//else if (mouseX >= 79 && mouseX <= 652 && mouseY >= 200 && mouseY <= 242)
+		//{
+			else if (mouseX >= 79 && mouseX <= 121 && mouseY >= 200 && mouseY <= 242)	// 2W-1S - puste miejsce na umiejetnosc
+			{
+				;
+
+			}
+			else if (mouseX >= 134 && mouseX <= 176 && mouseY >= 200 && mouseY <= 242)	// 2W-2S - skill nr 13
+			{
+				overlayedSkillIndex = 12;
+				position = RIGHT;
+				//item_skill_description(13, mousex, mousey, potion_skill, y, font20, font12, 1, al_map_rgba(0, 0, 0, 245));
+				//if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				//{
+				//	eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[12];
+				//	ITEM_SELECTED_DOCK = 0;
+				//}
+			}
+			else if (mouseX >= 189 && mouseX <= 231 && mouseY >= 200 && mouseY <= 242)	// 2W-3S - puste miejsce na umiejetnosc
+			{
+				;
+
+			}
+			else if (mouseX >= 283 && mouseX <= 325 && mouseY >= 200 && mouseY <= 242)	// 2W-4S - skill nr 15
+			{
+				overlayedSkillIndex = 14;
+				position = MIDDLE;
+				/*item_skill_description(15, mousex, mousey, potion_skill, y, font20, font12, 2, al_map_rgba(0, 0, 0, 245));
+				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				{
+					eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[14];
+					ITEM_SELECTED_DOCK = 0;
+				}*/
+			}
+			else if (mouseX >= 338 && mouseX <= 380 && mouseY >= 200 && mouseY <= 242)	// 2W-5S - skill nr 18
+			{
+				overlayedSkillIndex = 17;
+				position = MIDDLE;
+				/*item_skill_description(18, mousex, mousey, potion_skill, y, font20, font12, 2, al_map_rgba(0, 0, 0, 245));
+				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				{
+					eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[17];
+					ITEM_SELECTED_DOCK = 0;
+				}*/
+			}
+			else if (mouseX >= 393 && mouseX <= 435 && mouseY >= 200 && mouseY <= 242)	// 2W-6S - puste miejsce na umiejetnosc
+			{
+				;
+
+			}
+			else if (mouseX >= 500 && mouseX <= 542 && mouseY >= 200 && mouseY <= 242)	// 2W-7S - skill nr 4
+			{
+				overlayedSkillIndex = 3;
+				position = LEFT;
+				/*item_skill_description(4, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
+				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				{
+					if (potion_skill[3].quantity > 0)
+					{
+						eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[3];
+						ITEM_SELECTED_DOCK = 0;
+					}
+				}*/
+			}
+			else if (mouseX >= 555 && mouseX <= 597 && mouseY >= 200 && mouseY <= 242)	// 2W-8S - skill nr 5
+			{
+				overlayedSkillIndex = 4;
+				position = LEFT;
+				/*item_skill_description(5, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
+				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				{
+					if (potion_skill[4].quantity > 0)
+					{
+						eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[4];
+						ITEM_SELECTED_DOCK = 0;
+					}
+				}*/
+			}
+			else if (mouseX >= 610 && mouseX <= 652 && mouseY >= 200 && mouseY <= 242)	// 2W-9S - skill nr 6
+			{
+				overlayedSkillIndex = 5;
+				position = LEFT;
+				/*item_skill_description(6, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
+				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				{
+					if (potion_skill[5].quantity > 0)
+					{
+						eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[5];
+						ITEM_SELECTED_DOCK = 0;
+					}
+				}*/
+			}
+		//}
+		//else if (mouseX >= 79 && mouseX <= 652 && mouseY >= 270 && mouseY <= 312)
+		//{
+			else if (mouseX >= 79 && mouseX <= 121 && mouseY >= 270 && mouseY <= 312)	// 3W-1S - puste miejsce na umiejetnosc
+			{
+				;
+
+			}
+			else if (mouseX >= 134 && mouseX <= 176 && mouseY >= 270 && mouseY <= 312)	// 3W-2S - puste miejsce na umiejetnosc
+			{
+				;
+
+			}
+			else if (mouseX >= 189 && mouseX <= 231 && mouseY >= 270 && mouseY <= 312)	// 3W-3S - puste miejsce na umiejetnosc
+			{
+				;
+
+			}
+			else if (mouseX >= 283 && mouseX <= 325 && mouseY >= 270 && mouseY <= 312)	// 3W-4S - puste miejsce na umiejetnosc
+			{
+				;
+
+			}
+			else if (mouseX >= 338 && mouseX <= 380 && mouseY >= 270 && mouseY <= 312)	// 3W-5S - skill nr 19
+			{
+				overlayedSkillIndex = 18;
+				position = MIDDLE;
+				/*item_skill_description(19, mousex, mousey, potion_skill, y, font20, font12, 2, al_map_rgba(0, 0, 0, 245));
+				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
+				{
+					eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[18];
+					ITEM_SELECTED_DOCK = 0;
+				}*/
+			}
+			else if (mouseX >= 393 && mouseX <= 435 && mouseY >= 270 && mouseY <= 312)	// 3W-6S - puste miejsce na umiejetnosc
+			{
+				;
+
+			}
+			else if (mouseX >= 500 && mouseX <= 542 && mouseY >= 270 && mouseY <= 312)	// 3W-7S - skill nr 7
+			{
+				overlayedSkillIndex = 6;
+				position = LEFT;
+				//item_skill_description(7, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
+
+			}
+			else if (mouseX >= 555 && mouseX <= 597 && mouseY >= 270 && mouseY <= 312)	// 3W-8S - skill nr 8
+			{
+				overlayedSkillIndex = 7;
+				position = LEFT;
+				//item_skill_description(8, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
+
+			}
+			else if (mouseX >= 610 && mouseX <= 652 && mouseY >= 270 && mouseY <= 312)	// 3W-9S - skill nr 9
+			{
+				overlayedSkillIndex = 8;
+				position = LEFT;
+				//item_skill_description(9, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
+
+			}
+			else overlayedSkillIndex = -1;
+		//}
+		
+	}
 };

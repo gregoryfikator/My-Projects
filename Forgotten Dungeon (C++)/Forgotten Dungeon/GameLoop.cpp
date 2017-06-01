@@ -12,6 +12,8 @@ GameLoop::GameLoop(int ScreenWidth_new, int ScreenHeight_new)
 	MouseX = ScreenWidth / 2;
 	MouseY = ScreenHeight / 2;
 
+	mouseButtonPressedID = 0;
+	mouseLBPressed = false;
 	keyboardKeyPressedID = 0;
 
 	allegro_init	= new ALLEGRO_Init();
@@ -93,7 +95,7 @@ void GameLoop::GameMenu()
 				{
 					mainmenu->DrawCharacterSelectionMenu();
 					mainmenu->GetEvents();
-					switch (mainmenu->ProceedEventsCharacterSelectionMenu(outerCharacterName, &heroClass))
+					switch (mainmenu->ProceedEventsCharacterSelectionMenu(&outerCharacterName, &heroClass))
 					{
 					case 0:	// rozpoczecie nowej gry po wcisnieciu guzika Confirm
 						PLAY_GAME = true;
@@ -131,20 +133,22 @@ bool GameLoop::InitResources()
 	skillManager = new ManagerSkill();
 	skillManager->Init();
 
-	if (heroClass)
-		hero = new Hero(outerCharacterName, heroClass, "projekt//characters//sprite//test.png", ScreenWidth / 2, ScreenHeight / 2, resources->heroWarrior);
+
+	if (heroClass)//zmienic sciezke po dodaniu animacji ruchu postaci
+		hero = new Hero(outerCharacterName, heroClass, "projekt//characters//sprite//test.png", ScreenWidth / 2, ScreenHeight / 2, resources->heroWarrior, LOAD_GAME);
 	else
-		hero = new Hero(outerCharacterName, heroClass, "projekt//characters//sprite//test.png", ScreenWidth / 2, ScreenHeight / 2, resources->heroWizard);
-	
-	for (int i = 0; i < 20; i++)
-		hero->AssignNewItem(new Item(itemManager->DropItem()));
+		hero = new Hero(outerCharacterName, heroClass, "projekt//characters//sprite//test.png", ScreenWidth / 2, ScreenHeight / 2, resources->heroWizard, LOAD_GAME);
+
+	for (int i = 0; i < 15; i++)
+	{
+		hero->AssignNewItem(new Item(itemManager->DropItem()));		
+	}
 
 	/*
 	TO DO:
-	- oskryptowanie ekwipunku
 	- oskryptowanie okna umiejetnosci
 	- ^^^^^^^^^^^^^ 1. informacje po najechaniu kursorem
-	- ^^^^^^^^^^^^^ 2. mozliwosc przerzucania przedmiotow miedzy slotami, umiejetnosci na pasek szybkiego dostepu
+	- ^^^^^^^^^^^^^ 2. umiejetnosci na pasek szybkiego dostepu
 	- HUD: panele z guzikami (do w³¹czania ekwipunku, okna statystyk, okna menu), panel podgl¹du postaci, panel podgl¹du przeciwnika/NPC po najechaniu kursorem
 	*/
 
@@ -171,6 +175,17 @@ bool GameLoop::GamePlay()
 			{
 				MouseX = ev.mouse.x;
 				MouseY = ev.mouse.y;
+			}
+			if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
+			{
+				mouseButtonPressedID = ev.mouse.button;
+
+				if(mouseButtonPressedID == 1)
+				{
+					mouseLBPressed = true;
+				}
+
+				mouseButtonPressedID = 0;
 			}
 			if (ev.type == ALLEGRO_EVENT_TIMER)
 			{
@@ -200,32 +215,49 @@ bool GameLoop::GamePlay()
 				keyboardKeyPressedID = 0;
 			}
 
+			
+
 			if (redraw)// && al_is_event_queue_empty(event_queue))
 			{
 				redraw = false;
 				locationManager->DrawCurrentLocation();
 				hero->DrawCharacter();
-				DrawHud();
+				this->DrawHud();
 
 				if (openEquipment == true)
+				{
+					itemManager->CheckCursorOverlayAndClick(MouseX, MouseY, hero, mouseLBPressed);
+
 					itemManager->Draw(hero, resources, allegro_font);
+					//wyswietlanie opisu przedmiotu po najechaniu kursorem
+					itemManager->DrawDescription(MouseX, MouseY, hero->GetItemFromBackpack(itemManager->GetOverlayedItemIndex()), allegro_font);
+				}
 				else if (openSkillTab == true)
+				{
+					skillManager->CheckCursorOverlayAndClick(MouseX, MouseY);//, hero->GetEq(), mouseLBPressed);
+
 					skillManager->Draw(hero, resources, allegro_font);
+					//wyswietlanie opisu umiejetnosci po najechaniu kursorem
+					skillManager->DrawDescription(MouseX, MouseY, skillManager->GetSkill(), allegro_font);
+				}
 
 				if (debugModeOn == true)	// wlaczenie trybu debugowania wyswietla wspolrzedne postaci oraz kursora
 				{
-					al_draw_textf(allegro_font->font20, al_map_rgb(139, 0, 0), 635, 2, 0, "Hx1 = %3d", locationManager->GetXPos() + hero->GetX1Pos());
-					al_draw_textf(allegro_font->font20, al_map_rgb(139, 0, 0), 635, 22, 0, "Hy1 = %3d", locationManager->GetYPos() + hero->GetY1Pos());
-					al_draw_textf(allegro_font->font20, al_map_rgb(139, 0, 0), 630, 45, 0, "Hx2 = %3d", locationManager->GetXPos() + hero->GetX2Pos());
-					al_draw_textf(allegro_font->font20, al_map_rgb(139, 0, 0), 630, 65, 0, "Hy2 = %3d", locationManager->GetYPos() + hero->GetY2Pos());
-					al_draw_textf(allegro_font->font20, al_map_rgb(139, 0, 0), 630, 85, 0, "Mx1 = %3d", MouseX);
-					al_draw_textf(allegro_font->font20, al_map_rgb(139, 0, 0), 630, 105, 0, "My1 = %3d", MouseY);
+					al_draw_textf(allegro_font->font20, allegro_font->DARK_RED, 635, 2, 0, "Hx1 = %3d", locationManager->GetXPos() + hero->GetX1Pos());
+					al_draw_textf(allegro_font->font20, allegro_font->DARK_RED, 635, 22, 0, "Hy1 = %3d", locationManager->GetYPos() + hero->GetY1Pos());
+					al_draw_textf(allegro_font->font20, allegro_font->DARK_RED, 630, 45, 0, "Hx2 = %3d", locationManager->GetXPos() + hero->GetX2Pos());
+					al_draw_textf(allegro_font->font20, allegro_font->DARK_RED, 630, 65, 0, "Hy2 = %3d", locationManager->GetYPos() + hero->GetY2Pos());
+					al_draw_textf(allegro_font->font20, allegro_font->DARK_RED, 630, 85, 0, "Mx1 = %3d", MouseX);
+					al_draw_textf(allegro_font->font20, allegro_font->DARK_RED, 630, 105, 0, "My1 = %3d", MouseY);
 				}
+
+				mouseLBPressed = false;
 
 				al_draw_bitmap(resources->cursor, MouseX, MouseY, 0);
 
 				al_flip_display(); // wyœwietlenie aktualnego bufora na ekran
 				al_clear_to_color(al_map_rgb(0, 0, 0)); // wyczyszczenie aktualnego bufora ekranu
+				
 			}
 			
 		} while (true);
@@ -293,7 +325,7 @@ void GameLoop::HeroMovement()
 
 void GameLoop::DrawHud()
 {
-	al_draw_filled_rounded_rectangle(5, 420, 60, 475, 8, 8, al_map_rgba(0, 0, 0, 75));
-	al_draw_rounded_rectangle(5, 420, 60, 475, 8, 8, al_map_rgba(0, 0, 0, 175), 2.5);
+	al_draw_filled_rounded_rectangle(5, 420, 60, 475, 8, 8, allegro_font->TRANSPARENT_BLACK1);
+	al_draw_rounded_rectangle(5, 420, 60, 475, 8, 8, allegro_font->TRANSPARENT_BLACK3, 2.5);
 	al_draw_bitmap(resources->ui_quick, 167, 422, 0);
 }

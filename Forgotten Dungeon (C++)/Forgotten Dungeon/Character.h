@@ -8,6 +8,7 @@ using namespace std;
 class Character
 {
 	string name;
+	int		lvl;
 
 	int		X1;
 	int		Y1;
@@ -18,12 +19,13 @@ class Character
 	int		bmpX;
 	int		bmpY;
 
-	Stats *stats;
+	//Stats *stats;
 
 public:
 	Character(string newName, string newBMP, int newX1, int newY1)
 	{
 		name = newName;
+		lvl = 0;
 
 		BMP = al_load_bitmap(newBMP.c_str());
 		bmpX = al_get_bitmap_width(BMP);
@@ -34,6 +36,8 @@ public:
 
 		Y1 = newY1;
 		Y2 = Y1 + 32;
+
+		//stats = new Stats(hp_, emp_, dmg_min_, dmg_max_, def_, str_, dur_, dex_, agi_, wis_, chr_);
 	}
 
 	void SetCharacterStartPoint(int newX1, int newY1)
@@ -51,7 +55,10 @@ public:
 	int GetY2Pos() { return Y2; }
 	void SetXPos(int XPosChange) { X1 += XPosChange; X2 += XPosChange; }
 	void SetYPos(int YPosChange) { Y1 += YPosChange; Y2 += YPosChange; }
-	Stats *GetStats() { return stats; }
+
+	string GetName() { return name; }
+	int GetLevel() { return lvl; }
+	//Stats *GetStats() { return stats; }
 
 	void DrawCharacter()
 	{

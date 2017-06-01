@@ -13,6 +13,12 @@ public:
 	{
 
 	}
+	Weapon(Weapon &copiedItem): Item(copiedItem)	//konstruktor kopiuj¹cy, wykorzystywany w momencie zdobywania nowego przedmiotu
+	{
+	
+	}
+
+	virtual void DrawDescription() {};
 };
 
 class Shield : public Item
@@ -23,6 +29,12 @@ public:
 	{
 
 	}
+	Shield(Shield &copiedItem) : Item(copiedItem)	//konstruktor kopiuj¹cy, wykorzystywany w momencie zdobywania nowego przedmiotu
+	{
+
+	}
+
+	virtual void DrawDescription() {};
 };
 
 class Helmet : public Item
@@ -33,6 +45,11 @@ public:
 	{
 
 	}
+	Helmet(Helmet &copiedItem) : Item(copiedItem)	//konstruktor kopiuj¹cy, wykorzystywany w momencie zdobywania nowego przedmiotu
+	{
+
+	}
+	virtual void DrawDescription() {};
 };
 
 class ChestArmour : public Item
@@ -43,6 +60,11 @@ public:
 	{
 
 	}
+	ChestArmour(ChestArmour &copiedItem) : Item(copiedItem)	//konstruktor kopiuj¹cy, wykorzystywany w momencie zdobywania nowego przedmiotu
+	{
+
+	}
+	virtual void DrawDescription() {};
 };
 
 class LegsArmour : public Item
@@ -53,6 +75,11 @@ public:
 	{
 
 	}
+	LegsArmour(LegsArmour &copiedItem) : Item(copiedItem)	//konstruktor kopiuj¹cy, wykorzystywany w momencie zdobywania nowego przedmiotu
+	{
+
+	}
+	virtual void DrawDescription() {};
 };
 
 class Ring : public Item
@@ -63,4 +90,9 @@ public:
 	{
 
 	}
+	Ring(Ring &copiedItem) : Item(copiedItem)	//konstruktor kopiuj¹cy, wykorzystywany w momencie zdobywania nowego przedmiotu
+	{
+
+	}
+	virtual void DrawDescription() {};
 };

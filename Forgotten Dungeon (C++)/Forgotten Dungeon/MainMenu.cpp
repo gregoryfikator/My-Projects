@@ -166,7 +166,7 @@ void MainMenu::CloseCharacterSelectionMenu(bool offset)
 	keyboardKeyPressedID = 0;
 }
 
-int MainMenu::ProceedEventsCharacterSelectionMenu(string outerCharacterName, bool *heroClass)
+int MainMenu::ProceedEventsCharacterSelectionMenu(string *outerCharacterName, bool *heroClass)
 {
 	if (focusedButton != nullptr)
 	{
@@ -233,7 +233,7 @@ int MainMenu::ProceedEventsCharacterSelectionMenu(string outerCharacterName, boo
 			}
 			else if (focusedButton->CompareLabel("Confirm"))	// potwierdzenie wyboru i nazwy postaci - rozpoczecie gry
 			{
-				outerCharacterName = characterName;
+				*outerCharacterName = characterName;
 				*heroClass = warriorSelected;
 				CloseCharacterSelectionMenu(!warriorSelected);
 				//LISTA WARUNKOW KTORA MUSI BYC SPELNIONA ABY ZACZAC GRE

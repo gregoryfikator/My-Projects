@@ -18,6 +18,13 @@ ALLEGRO_Font::ALLEGRO_Font()
 	LIGHT_GREEN = al_map_rgb(45, 210, 55);
 	ORANGE = al_map_rgb(255, 142, 0);
 	LIGHT_YELLOW = al_map_rgb(240, 230, 140);
+	BLACK = al_map_rgb(0, 0, 0);
+	TRANSPARENT_BLACK1 = al_map_rgba(0, 0, 0, 125);
+	TRANSPARENT_BLACK2 = al_map_rgba(0, 0, 0, 150);
+	TRANSPARENT_BLACK3 = al_map_rgba(0, 0, 0, 175);
+	TRANSPARENT_BLACK4 = al_map_rgba(0, 0, 0, 200);
+	TRANSPARENT_BLACK5 = al_map_rgba(0, 0, 0, 225);
+	TRANSPARENT_BLACK6 = al_map_rgba(0, 0, 0, 250);
 
 	//if (!font12 || !font18 || !font20)
 	//if (!font12)

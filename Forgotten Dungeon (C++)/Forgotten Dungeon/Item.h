@@ -8,9 +8,9 @@ using namespace std;
 class Item
 {
 	string name; // char * nazwa;
-	vector <string> *description; // char *description[10];
+	vector <string> description; // char *description[10];
 	short int descriptionLines; 
-	short int descritptionFrameX; // int frame_x;
+	short int descriptionFrameX; // int frame_x;
 	short int descriptionFrameY; // int frame_y;
 
 	short int ID;
@@ -19,11 +19,10 @@ class Item
 	short int lvl;
 
 	Stats *stats; //struct Stats_EQ_MON *st;
+	Item *original; //kopie obiektow posiadaja wskaznik na oryginalny obiekt w celu prostszego wykorzystania mechanizmu RTTI
 	ALLEGRO_BITMAP *bmp;
 
 	bool selected;
-
-	//struct Items *next;
 
 public:
 	Item(short int flag_, short int ID_, short int lvl_, short int rarity_, float hp_, float emp_, int str_, int dur_, int dex_, int agi_, int wis_, int chr_, float dmg_min_, float dmg_max_, unsigned int def_, short int descritptionFrameX_, short int descriptionFrameY_, short int descriptionLines_, string bmpPath_, string name_, vector <string>* description_)
@@ -35,12 +34,12 @@ public:
 		name = name_;
 
 		descriptionLines = descriptionLines_;
-		descritptionFrameX = descritptionFrameX_;
+		descriptionFrameX = descritptionFrameX_;
 		descriptionFrameY = descriptionFrameY_;
-		description = description_;
+		description = *description_;
 
 		bmp = al_load_bitmap(bmpPath_.c_str());
-
+		original = nullptr;
 		selected = false;
 
 		stats = new Stats(hp_, emp_, dmg_min_, dmg_max_, def_, str_, dur_, dex_, agi_, wis_, chr_);
@@ -55,17 +54,17 @@ public:
 		name = copiedItem.name;
 
 		descriptionLines = copiedItem.descriptionLines;
-		descritptionFrameX = copiedItem.descritptionFrameX;
+		descriptionFrameX = copiedItem.descriptionFrameX;
 		descriptionFrameY = copiedItem.descriptionFrameY;
 		description = copiedItem.description;
 
 		bmp = copiedItem.bmp;
-
+		original = &copiedItem;
 		selected = copiedItem.selected;
 
 		stats = copiedItem.stats;	//statystyki jednakowe dla wszystkich przedmiotow tego samego rodzaju
 	}
-	// void ShowItemDescription()
+	virtual void DrawDescription() {};
 	// Stats *getStats() { return stats; }
 
 	friend class Hero;
