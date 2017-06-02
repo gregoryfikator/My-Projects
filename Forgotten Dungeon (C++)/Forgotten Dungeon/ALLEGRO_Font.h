@@ -24,6 +24,13 @@ class ALLEGRO_Font
 	ALLEGRO_COLOR TRANSPARENT_BLACK6;	// alpha: 250
 public:
 	ALLEGRO_Font();
+	~ALLEGRO_Font()
+	{
+		al_destroy_font(font12);
+		al_destroy_font(font18);
+		al_destroy_font(font20);
+		al_destroy_font(font40);
+	}
 
 	friend class MainMenu;
 	friend class Button;

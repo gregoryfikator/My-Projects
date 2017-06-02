@@ -36,7 +36,10 @@ public:
 		descriptionLines = descriptionLines_;
 
 		name = name_;
+
 		description = *description_;
+		description_->clear();
+		delete description_;
 
 		if (flag == 0)
 			bmp = al_load_bitmap(bmpPath_.c_str());
@@ -48,5 +51,11 @@ public:
 		stats = new StatsSkill(hp_, hpRegen_, hpRegenDuration_, emp_, empRegen_, empRegenDuration_, def_, defMultipler_, defMultiplerDuration_, dmgGivenMultipler_, dmgGivenMultiplerDuration_, dmgTakenMultipler_, dmgTakenMultiplerDuration_, doubleStrikeChance_, doubleStrikeDuration_, bleedingChance_, bleedingDuration_, unblockable_, fallback_);
 	}
 
+	~Skill()
+	{
+		delete stats;
+		description.erase(description.begin(), description.end());
+		al_destroy_bitmap(bmp);
+	}
 	friend class ManagerSkill;
 };

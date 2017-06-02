@@ -17,8 +17,9 @@ public:
 	{
 	
 	}
+	virtual ~Weapon(){}
 
-	virtual void DrawDescription() {};
+	virtual void DrawDescription() {}
 };
 
 class Shield : public Item
@@ -33,7 +34,7 @@ public:
 	{
 
 	}
-
+	virtual ~Shield() {}
 	virtual void DrawDescription() {};
 };
 
@@ -49,6 +50,7 @@ public:
 	{
 
 	}
+	virtual ~Helmet() {}
 	virtual void DrawDescription() {};
 };
 
@@ -64,6 +66,7 @@ public:
 	{
 
 	}
+	virtual ~ChestArmour() {}
 	virtual void DrawDescription() {};
 };
 
@@ -79,6 +82,7 @@ public:
 	{
 
 	}
+	virtual ~LegsArmour() {}
 	virtual void DrawDescription() {};
 };
 
@@ -94,5 +98,6 @@ public:
 	{
 
 	}
+	virtual ~Ring() {}
 	virtual void DrawDescription() {};
 };

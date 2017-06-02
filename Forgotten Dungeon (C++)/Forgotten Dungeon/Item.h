@@ -7,18 +7,18 @@ using namespace std;
 // ta klasa musi byæ polimorficzna ¿eby dzia³a³o RTTI
 class Item
 {
-	string name; // char * nazwa;
-	vector <string> description; // char *description[10];
+	string name; 
+	vector <string> description; 
 	short int descriptionLines; 
-	short int descriptionFrameX; // int frame_x;
-	short int descriptionFrameY; // int frame_y;
+	short int descriptionFrameX; 
+	short int descriptionFrameY; 
 
 	short int ID;
-	short int flag;	// mo¿e byæ nie potrzebne dziêki u¿yciu RTTI
+	short int flag;	
 	short int rarity;
 	short int lvl;
 
-	Stats *stats; //struct Stats_EQ_MON *st;
+	Stats *stats; 
 	Item *original; //kopie obiektow posiadaja wskaznik na oryginalny obiekt w celu prostszego wykorzystania mechanizmu RTTI
 	ALLEGRO_BITMAP *bmp;
 
@@ -37,7 +37,8 @@ public:
 		descriptionFrameX = descritptionFrameX_;
 		descriptionFrameY = descriptionFrameY_;
 		description = *description_;
-
+		description_->clear();
+		delete description_;
 		bmp = al_load_bitmap(bmpPath_.c_str());
 		original = nullptr;
 		selected = false;
@@ -64,6 +65,18 @@ public:
 
 		stats = copiedItem.stats;	//statystyki jednakowe dla wszystkich przedmiotow tego samego rodzaju
 	}
+
+	virtual ~Item()
+	{
+		if (original == nullptr)
+		{
+			al_destroy_bitmap(bmp);
+			delete stats;
+		}
+
+		description.erase(description.begin(), description.end());
+	}
+
 	virtual void DrawDescription() {};
 	// Stats *getStats() { return stats; }
 

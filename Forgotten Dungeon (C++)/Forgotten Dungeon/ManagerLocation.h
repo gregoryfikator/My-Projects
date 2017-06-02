@@ -9,12 +9,49 @@ class ManagerLocation : public Manager
 	QuadTree *rootQuadTree;
 
 public:
+	ManagerLocation() : Manager()
+	{
+		currentLocation = nullptr;
+		rootQuadTree = nullptr;
+	}
 	virtual void Init(string bmpFile, string obstacleFile) // a moze konstruktor??
 	{
 		currentLocation = new Location(bmpFile, obstacleFile);
 		rootQuadTree = new QuadTree(1);
 
 		rootQuadTree->AssignObstaclesToSectors(currentLocation->GetListHead());
+	}
+	~ManagerLocation()
+	{
+		delete rootQuadTree->I->I;
+		delete rootQuadTree->I->II;
+		delete rootQuadTree->I->III;
+		delete rootQuadTree->I->IV;
+
+		delete rootQuadTree->II->I;
+		delete rootQuadTree->II->II;
+		delete rootQuadTree->II->III;
+		delete rootQuadTree->II->IV;
+
+		delete rootQuadTree->III->I;
+		delete rootQuadTree->III->II;
+		delete rootQuadTree->III->III;
+		delete rootQuadTree->III->IV;
+
+		delete rootQuadTree->IV->I;
+		delete rootQuadTree->IV->II;
+		delete rootQuadTree->IV->III;
+		delete rootQuadTree->IV->IV;
+
+		delete rootQuadTree->I;
+		delete rootQuadTree->II;
+		delete rootQuadTree->III;
+		delete rootQuadTree->IV;
+
+		//rootQuadTree->DeleteNodes(rootQuadTree);
+
+		delete rootQuadTree;
+		delete currentLocation;
 	}
 
 	int GetXPos() { return currentLocation->GetXPos(); }
@@ -79,6 +116,8 @@ public:
 			VertexLUX += 3;
 			VertexRDX += 3;
 			break;
+		default:
+			return false;
 		}
 
 		list<Obstacle *>::iterator it1 = list1->begin();

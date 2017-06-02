@@ -4,7 +4,8 @@ class Manager
 {
 
 public:
-	virtual ~Manager() {};
-	virtual void Init() {};
-	virtual void Draw() {};
+	Manager() {}
+	virtual ~Manager() {}
+	virtual void Init() {}
+	virtual void Draw() {}
 };

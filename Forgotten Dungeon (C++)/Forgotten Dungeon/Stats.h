@@ -20,6 +20,8 @@ public:
 		wis = wis_;
 		chr = chr_;
 	}
+	~Stats() {}
+
 	// podstawowe statystyki, wspólne dla przedmiotów i wszystkich postaci nie bêd¹cych NPC
 
 	float hp;	// punkty zdrowia
@@ -70,6 +72,8 @@ public:
 			chr_b = 1.5;
 		}
 	}
+	~StatsHero() {}
+
 	// statystyki z za³o¿onym ekwipunkiem
 	int str_eq;
 	int dur_eq;
@@ -115,6 +119,7 @@ public:
 		unblockable = unblockable_;
 		fallback = fallback_;
 	}
+	~StatsSkill() {}
 
 	int hp;
 	float hpRegen;

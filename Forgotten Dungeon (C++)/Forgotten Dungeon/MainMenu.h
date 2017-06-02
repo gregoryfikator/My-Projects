@@ -47,7 +47,24 @@ class MainMenu
 
 public:
 	MainMenu(ALLEGRO_EVENT_QUEUE *event_queue_new, ALLEGRO_Font *allegro_font_new, ALLEGRO_BITMAP *background_, ALLEGRO_BITMAP *cursor_, ALLEGRO_BITMAP *heroWarrior_, ALLEGRO_BITMAP *heroWizzard_);
+	~MainMenu()
+	{
+		for (int i = 0; i < 6; i++)
+			if (mainMenuButton[i] != nullptr)
+				delete mainMenuButton[i];
 
+		for (int i = 0; i < 4; i++)
+			if (characterSelectionMenuButton[i] != nullptr)
+				delete characterSelectionMenuButton[i];
+
+		if (characterNameMenuButton != nullptr)
+			delete characterNameMenuButton;
+
+		al_destroy_bitmap(background);
+		al_destroy_bitmap(cursor);
+		al_destroy_bitmap(heroWarrior);
+		al_destroy_bitmap(heroWizard);
+	}
 	void	DrawMenu();
 	void	DrawMainMenu();
 	void	HighlightButton(Button *testedButton);

@@ -111,6 +111,17 @@ public:
 		//}
 
 	}
+	virtual ~Hero()
+	{
+		delete heroStats;
+		for (int i = 0; i < 20; i++)
+			if (eq[i] != nullptr)
+				delete eq[i];
+
+		for(int i = 0; i < 7; i++)
+			if(eqWorn[i] != nullptr)
+				delete eqWorn[i];
+	}
 
 	ALLEGRO_BITMAP * getPortrait()
 	{

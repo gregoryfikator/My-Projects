@@ -51,6 +51,24 @@ GameLoop::GameLoop(int ScreenWidth_new, int ScreenHeight_new)
 	openSkillTab	= false;
 }
 
+GameLoop::~GameLoop()
+{
+	delete mainmenu;
+	delete resources;
+	delete allegro_font;
+	delete allegro_init;
+
+	delete hero;
+	delete itemManager;
+	delete skillManager;
+	delete locationManager;
+	
+	al_destroy_event_queue(event_queue);
+	al_destroy_timer(timer);
+	al_destroy_display(window);
+}
+
+
 void GameLoop::GameMenu()
 {
 	do
@@ -133,7 +151,6 @@ bool GameLoop::InitResources()
 	skillManager = new ManagerSkill();
 	skillManager->Init();
 
-
 	if (heroClass)//zmienic sciezke po dodaniu animacji ruchu postaci
 		hero = new Hero(outerCharacterName, heroClass, "projekt//characters//sprite//test.png", ScreenWidth / 2, ScreenHeight / 2, resources->heroWarrior, LOAD_GAME);
 	else
@@ -211,6 +228,11 @@ bool GameLoop::GamePlay()
 				{
 					debugModeOn = !debugModeOn;
 				}
+				if (keyboardKeyPressedID == ALLEGRO_KEY_ESCAPE)
+				{
+					break;
+				}
+
 
 				keyboardKeyPressedID = 0;
 			}
@@ -226,8 +248,11 @@ bool GameLoop::GamePlay()
 
 				if (openEquipment == true)
 				{
+					itemManager->CheckEquipmentButtons(MouseX, MouseY, hero, mouseLBPressed);
 					itemManager->CheckCursorOverlayBackpackAndClick(MouseX, MouseY, hero, mouseLBPressed);
 					itemManager->CheckCursorOverlayWearingAndClick(MouseX, MouseY, hero, mouseLBPressed);
+					if (itemManager->CheckRecalculation() == true)
+						itemManager->RecalculateStats(hero);
 
 					itemManager->Draw(hero, resources, allegro_font);
 					//wyswietlanie opisu przedmiotu po najechaniu kursorem

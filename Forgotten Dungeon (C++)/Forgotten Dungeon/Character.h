@@ -1,7 +1,5 @@
 #pragma once
 #include <allegro5\allegro.h>
-#include <string> 
-#include "Stats.h"
 
 using namespace std;
 
@@ -38,6 +36,11 @@ public:
 		Y2 = Y1 + 32;
 
 		//stats = new Stats(hp_, emp_, dmg_min_, dmg_max_, def_, str_, dur_, dex_, agi_, wis_, chr_);
+	}
+	virtual ~Character()
+	{
+		//al_destroy_bitmap(BMP);
+		////delete stats;
 	}
 
 	void SetCharacterStartPoint(int newX1, int newY1)

@@ -24,6 +24,7 @@ public:
 		X2 = copied.X2;
 		Y2 = copied.Y2;
 	}
+	~Obstacle(){}
 	
 	int GetX1Pos() { return X1; }
 	int GetY1Pos() { return Y1; }

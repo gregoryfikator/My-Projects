@@ -8,6 +8,7 @@
 #include "ManagerLocation.h"
 #include "ManagerItem.h"
 #include "ManagerSkill.h"
+#include <vld.h>
 
 
 class GameLoop
@@ -68,7 +69,8 @@ class GameLoop
 
 public:
 	GameLoop(int ScreenWidth_new, int ScreenHeight_new);
-	//~GameLoop();
+	~GameLoop();
+
 
 	// Methods
 

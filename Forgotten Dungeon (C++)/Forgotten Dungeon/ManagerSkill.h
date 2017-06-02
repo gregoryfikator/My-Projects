@@ -1,15 +1,15 @@
 #pragma once
 #include <vector>
-#include <list>
 #include <fstream>
 #include <sstream>
 #include "Skill.h"
 
 using namespace std;
 
-class ManagerSkill
+class ManagerSkill : public Manager
 {
 	vector<Skill *> *skillList;
+	ALLEGRO_BITMAP *bmpMain;
 	int overlayedSkillIndex;
 	int selectedSkillIndex;
 	enum PositionToDrawDescription
@@ -18,11 +18,39 @@ class ManagerSkill
 	} position;
 
 public:
+	ManagerSkill() : Manager()
+	{
+		skillList = nullptr;
+		bmpMain = al_load_bitmap("data//skill//bmp//skillTable.png");
+		overlayedSkillIndex = -1;
+		selectedSkillIndex = -1;	
+		position = NONE;
+	}
+	~ManagerSkill()
+	{
+		//skillList->erase(skillList->begin(), skillList->end());
+		//delete skillList;
+
+		for (int i = 0; i < skillList->size(); i++)
+		{
+			Skill* element = skillList->at(i);
+			delete element;
+		}
+		delete skillList;
+
+		/*while (!skillList->empty())
+		{
+			Skill* element = skillList->pop_back();
+			skillList->;
+			delete element;
+		}
+		delete skillList;*/
+
+		if (bmpMain != nullptr)
+			al_destroy_bitmap(bmpMain);
+	}
 	virtual void Init(string itemFile = "data//skill//skilllist.txt")
 	{
-		overlayedSkillIndex = -1;
-		selectedSkillIndex = -1;
-
 		short int flag;	// mo¿e byæ nie potrzebne dziêki u¿yciu RTTI
 		short int ID;	
 		short int cooldown;
@@ -62,10 +90,9 @@ public:
 		short int descriptionLines;
 		
 		string name; // char * nazwa;
-		vector <string> *description = new vector<string>; // char *description[10];
+		vector <string> *description = new vector<string>;
 
 		string bmpPath;
-		ALLEGRO_BITMAP *bmpMain = al_load_bitmap("data//skill//bmp//skillTable.png");
 
 		fstream File;
 		stringstream ss;
@@ -105,18 +132,15 @@ public:
 				
 				description = new vector<string>;
 			}
+			delete description;
 			File.close();
 		}
-
-		// zaladowac z pliku itemy do listy, brac pod uwage flagi przedmiotow przy tworzeniu nowych obiektów
-		// flagi moga byc nie potrzebne dziêki u¿yciu RTTI
 	}
 	
 
 	virtual void Draw(Hero *hero, Resources *resources, ALLEGRO_Font *allegro_font)
 	{
 		// calosc do przemyslenia jak zrobic zeby ladnie dzialalo w prostej petli
-
 
 		// rysowanie menu wyboru umiejêtnoœci
 		al_draw_filled_rectangle(0, 0, 720, 480, al_map_rgba(0, 0, 0, 175));

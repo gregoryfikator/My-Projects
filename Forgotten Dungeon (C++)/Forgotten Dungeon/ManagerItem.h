@@ -19,10 +19,12 @@ class ManagerItem : public Manager
 	bool overlayBackpack;
 	bool selectedFromBackpack;
 
+	bool recalculate;
+
 	Item *selectedItem;
 
 public:
-	ManagerItem()
+	ManagerItem(): Manager()
 	{
 		itemList = nullptr;
 		overlayedItemIndex = -1;
@@ -30,34 +32,39 @@ public:
 		overlayBackpack = false;
 		selectedFromBackpack = false;
 		selectedItem = nullptr;
+
+		recalculate = false;
 	}
 	~ManagerItem()
 	{
-		itemList->clear();
+		while (!(itemList)->empty())
+		{
+			Item* element = (itemList)->front();
+			(itemList)->pop_front();
+			delete element;
+		}
 		delete itemList;
 	};
 	virtual void Init(string itemFile = "data//item//itemlist.txt")
 	{
-		string name; // char * nazwa;
-		vector <string>* description; // char *description[10];
+		string name; 
+		vector <string>* description = new vector<string>;
 		short int descriptionLines; 
-		short int descritptionFrameX; // int frame_x;
-		short int descriptionFrameY; // int frame_y;
+		short int descritptionFrameX;
+		short int descriptionFrameY;
 
 		short int ID;
-		short int flag;	// mo¿e byæ nie potrzebne dziêki u¿yciu RTTI
+		short int flag;	
 		short int rarity;
 		short int lvl;
-
-		string bmpPath;
 
 		float dmg_min;
 		float dmg_max;
 
 		unsigned int def;
 
-		float hp;	// punkty zdrowia
-		float emp;	// punkty energii lub many w zale¿noœci od klasy postaci
+		float hp;	
+		float emp;
 
 		int str;
 		int dur;
@@ -66,7 +73,6 @@ public:
 		int wis;
 		int chr;
 
-		description = new vector<string>;
 		fstream File;
 		stringstream ss;
 
@@ -91,7 +97,7 @@ public:
 				}
 				ss << ID;		
 				tmp = ss.str();
-				bmpPath = "data//item//bmp//" + tmp + ".png";
+				string bmpPath = "data//item//bmp//" + tmp + ".png";
 				ss.str("");
 
 				switch (flag)
@@ -119,6 +125,7 @@ public:
 				}
 				description = new vector<string>;
 			}
+			delete description;
 			File.close();
 		}
 
@@ -195,7 +202,6 @@ public:
 		al_draw_textf(allegro_font->font18, allegro_font->WHITE, 576, 310, ALLEGRO_ALIGN_CENTRE, "%d", hero->heroStats->chr);
 		this->DrawCurrentStats(633, 310, hero->heroStats->chr, hero->heroStats->chr_eq, allegro_font);
 	}
-
 	static void DrawCurrentStats(int X, int Y, int baseStat, int currentStat, ALLEGRO_Font *fonts)
 	{
 		if (baseStat < currentStat)
@@ -205,7 +211,6 @@ public:
 		else
 			al_draw_textf(fonts->font18, fonts->WHITE, X, Y, ALLEGRO_ALIGN_CENTRE, "%d", currentStat);
 	}
-
 	static void DrawItemsFromBackpack(Hero *hero)
 	{
 		int slot = 0;
@@ -222,8 +227,24 @@ public:
 					al_draw_scaled_bitmap(hero->eq[slot]->bmp, 0, 0, al_get_bitmap_width(hero->eq[slot]->bmp), al_get_bitmap_height(hero->eq[slot]->bmp), slotX, slotY, 42, 42, 0);
 				}
 	}
-
-	void DrawHighlight(Hero *hero)
+	static void DrawWearingItems(Hero *hero)
+	{
+			if (hero->eqWorn[0] != nullptr)
+				al_draw_tinted_scaled_rotated_bitmap_region(hero->eqWorn[0]->bmp, al_get_bitmap_width(hero->eqWorn[0]->bmp) / 4, 0, al_get_bitmap_width(hero->eqWorn[0]->bmp) * 3 / 4, al_get_bitmap_height(hero->eqWorn[0]->bmp), al_map_rgba_f(1, 1, 1, 1), 0, 0, 284, 173, 0.50, 0.42, 0, 0); //0.58666, 0.46, 0, 0);
+			if (hero->eqWorn[1] != nullptr)
+				al_draw_tinted_scaled_rotated_bitmap_region(hero->eqWorn[1]->bmp, 0, 0, al_get_bitmap_width(hero->eqWorn[1]->bmp), al_get_bitmap_height(hero->eqWorn[1]->bmp), al_map_rgba_f(1, 1, 1, 1), 0, 0, 386, 173, 0.5, 0.5, 0, 0);
+			if (hero->eqWorn[2] != nullptr)
+				al_draw_tinted_scaled_rotated_bitmap_region(hero->eqWorn[2]->bmp, 0, 0, al_get_bitmap_width(hero->eqWorn[2]->bmp), al_get_bitmap_height(hero->eqWorn[2]->bmp), al_map_rgba_f(1, 1, 1, 1), 0, 0, 340, 126, 0.66, 0.66, 0, 0);
+			if (hero->eqWorn[3] != nullptr)
+				al_draw_tinted_scaled_rotated_bitmap_region(hero->eqWorn[3]->bmp, 0, 0, al_get_bitmap_width(hero->eqWorn[3]->bmp), al_get_bitmap_height(hero->eqWorn[3]->bmp), al_map_rgba_f(1, 1, 1, 1), 0, 0, 335, 180, 0.72, 0.75, 0, 0);
+			if (hero->eqWorn[4] != nullptr)
+				al_draw_tinted_scaled_rotated_bitmap_region(hero->eqWorn[4]->bmp, 0, 0, al_get_bitmap_width(hero->eqWorn[4]->bmp), al_get_bitmap_height(hero->eqWorn[4]->bmp), al_map_rgba_f(1, 1, 1, 1), 0, 0, 323, 252, 0.6, 0.55, 0, 0);
+			if (hero->eqWorn[5] != nullptr)
+				al_draw_tinted_scaled_rotated_bitmap_region(hero->eqWorn[5]->bmp, 0, 0, al_get_bitmap_width(hero->eqWorn[5]->bmp), al_get_bitmap_height(hero->eqWorn[5]->bmp), al_map_rgba_f(1, 1, 1, 1), 0, 0, 295, 255, 0.43, 0.43, 0, 0);
+			if (hero->eqWorn[6] != nullptr)
+				al_draw_tinted_scaled_rotated_bitmap_region(hero->eqWorn[6]->bmp, 0, 0, al_get_bitmap_width(hero->eqWorn[6]->bmp), al_get_bitmap_height(hero->eqWorn[6]->bmp), al_map_rgba_f(1, 1, 1, 1), 0, 0, 396, 255, 0.43, 0.43, 0, 0);
+	}
+	static void DrawHighlight(Hero *hero)
 	{
 		for (int i = 0; i < 7; i++)
 		{
@@ -259,29 +280,42 @@ public:
 					if (hero->eqWorn[i]->selected)
 						al_draw_filled_rounded_rectangle(393, 248, 426, 284, 8, 8, al_map_rgb(30, 255, 30));
 					break;
+				default:
+					break;
+				}
+			}
+		}
+	}
+	void CheckEquipmentButtons(int mouseX, int mouseY, Hero *hero, bool LMBPressed)
+	{
+		if (mouseX >= 53 && mouseX <= 75 && mouseY <= 401 && mouseY >= 379)
+		{
+			if (LMBPressed)
+			{
+				if (selectedItemIndex != -1)
+				{
+					if (selectedFromBackpack)
+					{
+						//hero->eq[selectedItemIndex]->bmp = nullptr;
+						delete hero->eq[selectedItemIndex];
+						hero->eq[selectedItemIndex] = nullptr;
+						selectedItemIndex = -1;
+						selectedItem = nullptr;
+						selectedFromBackpack = false;
+					}
+					else
+					{
+						//hero->eqWorn[selectedItemIndex]->bmp = nullptr;
+						delete hero->eqWorn[selectedItemIndex];
+						hero->eqWorn[selectedItemIndex] = nullptr;
+						selectedItemIndex = -1;
+						selectedItem = nullptr;
+						recalculate = true;
+					}
 				}
 			}
 		}	
 	}
-
-	static void DrawWearingItems(Hero *hero)
-	{
-			if (hero->eqWorn[0] != nullptr)
-				al_draw_tinted_scaled_rotated_bitmap_region(hero->eqWorn[0]->bmp, al_get_bitmap_width(hero->eqWorn[0]->bmp) / 4, 0, al_get_bitmap_width(hero->eqWorn[0]->bmp) * 3 / 4, al_get_bitmap_height(hero->eqWorn[0]->bmp), al_map_rgba_f(1, 1, 1, 1), 0, 0, 284, 173, 0.50, 0.42, 0, 0); //0.58666, 0.46, 0, 0);
-			if (hero->eqWorn[1] != nullptr)
-				al_draw_tinted_scaled_rotated_bitmap_region(hero->eqWorn[1]->bmp, 0, 0, al_get_bitmap_width(hero->eqWorn[1]->bmp), al_get_bitmap_height(hero->eqWorn[1]->bmp), al_map_rgba_f(1, 1, 1, 1), 0, 0, 386, 173, 0.5, 0.5, 0, 0);
-			if (hero->eqWorn[2] != nullptr)
-				al_draw_tinted_scaled_rotated_bitmap_region(hero->eqWorn[2]->bmp, 0, 0, al_get_bitmap_width(hero->eqWorn[2]->bmp), al_get_bitmap_height(hero->eqWorn[2]->bmp), al_map_rgba_f(1, 1, 1, 1), 0, 0, 340, 126, 0.66, 0.66, 0, 0);
-			if (hero->eqWorn[3] != nullptr)
-				al_draw_tinted_scaled_rotated_bitmap_region(hero->eqWorn[3]->bmp, 0, 0, al_get_bitmap_width(hero->eqWorn[3]->bmp), al_get_bitmap_height(hero->eqWorn[3]->bmp), al_map_rgba_f(1, 1, 1, 1), 0, 0, 335, 180, 0.72, 0.75, 0, 0);
-			if (hero->eqWorn[4] != nullptr)
-				al_draw_tinted_scaled_rotated_bitmap_region(hero->eqWorn[4]->bmp, 0, 0, al_get_bitmap_width(hero->eqWorn[4]->bmp), al_get_bitmap_height(hero->eqWorn[4]->bmp), al_map_rgba_f(1, 1, 1, 1), 0, 0, 323, 252, 0.6, 0.55, 0, 0);
-			if (hero->eqWorn[5] != nullptr)
-				al_draw_tinted_scaled_rotated_bitmap_region(hero->eqWorn[5]->bmp, 0, 0, al_get_bitmap_width(hero->eqWorn[5]->bmp), al_get_bitmap_height(hero->eqWorn[5]->bmp), al_map_rgba_f(1, 1, 1, 1), 0, 0, 295, 255, 0.43, 0.43, 0, 0);
-			if (hero->eqWorn[6] != nullptr)
-				al_draw_tinted_scaled_rotated_bitmap_region(hero->eqWorn[6]->bmp, 0, 0, al_get_bitmap_width(hero->eqWorn[6]->bmp), al_get_bitmap_height(hero->eqWorn[6]->bmp), al_map_rgba_f(1, 1, 1, 1), 0, 0, 396, 255, 0.43, 0.43, 0, 0);
-	}
-
 	void CheckCursorOverlayBackpackAndClick(int mouseX, int mouseY, Hero *hero, bool LMBPressed) // funkcja jest 'nieelegancko' wykonana ze wzgledu na ograniczenia czasowe
 	{
 		int x1eq = 71;
@@ -322,16 +356,18 @@ public:
 									{
 										hero->SwapItems(selectedItem, hero->eq[i], i, selectedItemIndex);
 										selectedItem = nullptr;
-										hero->GetItemFromBackpack(i)->selected = false;
+										hero->eq[i]->selected = false;
 										selectedItemIndex = -1;
 										selectedFromBackpack = false;
+										recalculate = true;
 									}
 									else if (typeid(*(selectedItem->original)).name() == typeid(*(hero->eq[i]->original)).name())
 									{
 										hero->SwapItems(selectedItem, hero->eq[i], i, selectedItemIndex, selectedFromBackpack);
 										selectedItem = nullptr;
-										hero->GetItemFromBackpack(i)->selected = false;
+										hero->eq[i]->selected = false;
 										selectedItemIndex = -1;
+										recalculate = true;								
 									}
 								}
 
@@ -349,6 +385,7 @@ public:
 							hero->GetItemFromBackpack(i)->selected = false;
 							selectedItemIndex = -1;
 							selectedFromBackpack = false;
+							recalculate = true;
 							return;
 						}
 					}
@@ -358,61 +395,6 @@ public:
 		overlayedItemIndex = -1;
 		overlayBackpack = false;
 	}
-
-	void ProceedItemChange(Hero *hero, bool LMBPressed, int slot, const char *type)
-	{
-		if (hero->eqWorn[slot] != nullptr)
-		{
-			overlayedItemIndex = slot;
-			if (LMBPressed)
-			{
-				if (selectedItem == nullptr)
-				{
-					selectedItemIndex = slot;
-					selectedItem = hero->eqWorn[slot];
-					selectedItem->selected = true;
-					cout << typeid(*(hero->eqWorn[slot]->original)).name() << endl;
-				}
-				else if (selectedItem == hero->eqWorn[slot])
-				{
-					selectedItemIndex = -1;
-					selectedItem->selected = false;
-					selectedItem = nullptr;
-				}
-				else
-				{
-					if (typeid(*(selectedItem->original)).name() == typeid(*(hero->eqWorn[slot]->original)).name())
-					{
-						if (selectedFromBackpack == true)
-							hero->SwapItems(selectedItem, hero->eqWorn[slot], slot, selectedItemIndex, selectedFromBackpack);
-						else if (slot == 6 && selectedItemIndex == slot - 1 || slot == 5 && selectedItemIndex == slot + 1)
-							hero->SwapItems2(selectedItem, hero->eqWorn[slot], slot, selectedItemIndex);
-						
-						selectedItem = nullptr;
-						selectedFromBackpack = false;
-						hero->eqWorn[slot]->selected = false;
-					}
-				}
-				return;
-			}
-		}
-		if (selectedItem != nullptr && LMBPressed)
-		{
-			if (strcmp(typeid(*(selectedItem->original)).name(), type) == 0)
-			{
-				if (slot == 6 && selectedItemIndex == slot - 1 || slot == 5 && selectedItemIndex == slot + 1)
-					hero->SwapItems2(selectedItem, hero->eqWorn[slot], slot, selectedItemIndex);
-				else
-					hero->SwapWithEmpty(selectedItem, slot, selectedItemIndex, true);
-				hero->eqWorn[slot]->selected = false;
-				selectedItem = nullptr;
-				selectedItemIndex = -1;
-				selectedFromBackpack = false;
-			}
-			//else play deny sound
-		}
-	}
-
 	void CheckCursorOverlayWearingAndClick(int mouseX, int mouseY, Hero *hero, bool LMBPressed) // funkcja jest 'nieelegancko' wykonana ze wzgledu na ograniczenia czasowe
 	{
 		if (mouseX >= 280 && mouseY >= 122 && mouseX <= 439 && mouseY <= 317)
@@ -469,9 +451,110 @@ public:
 			}
 		}
 	}
+	void ProceedItemChange(Hero *hero, bool LMBPressed, int slot, const char *type)
+	{
+		if (hero->eqWorn[slot] != nullptr)
+		{
+			overlayedItemIndex = slot;
+			if (LMBPressed)
+			{
+				if (selectedItem == nullptr)
+				{
+					selectedItemIndex = slot;
+					selectedItem = hero->eqWorn[slot];
+					selectedItem->selected = true;
+					cout << typeid(*(hero->eqWorn[slot]->original)).name() << endl;
+				}
+				else if (selectedItem == hero->eqWorn[slot])
+				{
+					selectedItemIndex = -1;
+					selectedItem->selected = false;
+					selectedItem = nullptr;
+				}
+				else
+				{
+					if (typeid(*(selectedItem->original)).name() == typeid(*(hero->eqWorn[slot]->original)).name())
+					{
+						if (selectedFromBackpack == true)
+							hero->SwapItems(selectedItem, hero->eqWorn[slot], slot, selectedItemIndex, selectedFromBackpack);
+						else if (slot == 6 && selectedItemIndex == slot - 1 || slot == 5 && selectedItemIndex == slot + 1)
+							hero->SwapItems2(selectedItem, hero->eqWorn[slot], slot, selectedItemIndex);
+						
+						selectedItem = nullptr;
+						selectedFromBackpack = false;
+						hero->eqWorn[slot]->selected = false;
+						recalculate = true;
+					}
+				}
+				return;
+			}
+		}
+		if (selectedItem != nullptr && LMBPressed)
+		{
+			if (strcmp(typeid(*(selectedItem->original)).name(), type) == 0)
+			{
+				if (slot == 6 && selectedItemIndex == slot - 1 || slot == 5 && selectedItemIndex == slot + 1)
+					hero->SwapItems2(selectedItem, hero->eqWorn[slot], slot, selectedItemIndex);
+				else
+					hero->SwapWithEmpty(selectedItem, slot, selectedItemIndex, true);
+				hero->eqWorn[slot]->selected = false;
+				selectedItem = nullptr;
+				selectedItemIndex = -1;
+				selectedFromBackpack = false;
+				recalculate = true;
+			}
+			//else play deny sound
+		}
+	}
+	void RecalculateStats(Hero *hero)
+	{
+		hero->heroStats->str_eq = hero->heroStats->str;
+		hero->heroStats->dur_eq = hero->heroStats->dur;
+		hero->heroStats->agi_eq = hero->heroStats->agi;
+		hero->heroStats->dex_eq = hero->heroStats->dex;
+		hero->heroStats->wis_eq = hero->heroStats->wis;
+		hero->heroStats->chr_eq = hero->heroStats->chr;
+
+		hero->heroStats->def = 0;
+		hero->heroStats->dmg_min = 0;
+		hero->heroStats->dmg_max = 2;
+
+		if (hero->heroClass)
+		{
+			hero->heroStats->hp = 50;
+			hero->heroStats->emp = 25;
+			
+		}
+		else
+		{
+			hero->heroStats->hp = 30;
+			hero->heroStats->emp = 50;
+		}
+		for (int i = 0; i < 7; i++)
+		{
+			if(hero->eqWorn[i] != nullptr)
+			{
+				hero->heroStats->str_eq += hero->eqWorn[i]->stats->str;
+				hero->heroStats->dur_eq += hero->eqWorn[i]->stats->dur;
+				hero->heroStats->agi_eq += hero->eqWorn[i]->stats->agi;
+				hero->heroStats->dex_eq += hero->eqWorn[i]->stats->dex;
+				hero->heroStats->wis_eq += hero->eqWorn[i]->stats->wis;
+				hero->heroStats->chr_eq += hero->eqWorn[i]->stats->chr;
+
+				hero->heroStats->def += hero->eqWorn[i]->stats->def;
+				hero->heroStats->dmg_min += hero->eqWorn[i]->stats->dmg_min;
+				hero->heroStats->dmg_max += hero->eqWorn[i]->stats->dmg_max;
+
+				hero->heroStats->hp += hero->eqWorn[i]->stats->hp;
+				hero->heroStats->emp += hero->eqWorn[i]->stats->emp;			
+			}
+		}
+		recalculate = false;
+	}
 
 	int GetOverlayedItemIndex() { return overlayedItemIndex; }
 	bool GetOverlayBackpack() { return overlayBackpack; }
+	bool CheckRecalculation() { return recalculate; }
 
 	static void DrawDescription(int mouseX, int mouseY, Item *item, ALLEGRO_Font *fonts, int y = 34)
 	{
@@ -491,7 +574,6 @@ public:
 
 	Item DropItem() //metoda losuje przedmiot zdobywany po pokonaniu przeciwnika
 	{
-	
 		int stop = rand() % itemList->size();
 		int i = 0;
 

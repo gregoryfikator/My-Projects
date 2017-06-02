@@ -11,5 +11,5 @@ class ALLEGRO_Init
 {
 public:
 	ALLEGRO_Init();
-	//~ALLEGRO_Init();
+	~ALLEGRO_Init() {}
 };

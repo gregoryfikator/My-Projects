@@ -31,6 +31,19 @@ MainMenu::MainMenu(ALLEGRO_EVENT_QUEUE *event_queue_new, ALLEGRO_Font *allegro_f
 	mainMenuButton[3] = new Button(buttonPanelX1, 277, buttonPanelX2, 317, true, false, "Options");
 	mainMenuButton[4] = new Button(buttonPanelX1, 325, buttonPanelX2, 365, true, false, "Credits");
 	mainMenuButton[5] = new Button(buttonPanelX1, 373, buttonPanelX2, 413, true, false, "Quit");
+
+	characterNameMenuButton = new Button(369, 211, 607, 241, true, true, characterName);
+
+	characterSelectionMenuButton[0] = new Button(369, 416, 483, 446, true, false, "Return");
+	characterSelectionMenuButton[1] = new Button(493, 416, 607, 446, true, false, "Confirm");
+	characterSelectionMenuButton[2] = new Button(108, 171, 356, 451, true, false, "Warrior");
+	characterSelectionMenuButton[3] = new Button(364, 171, 612, 451, false, false, "Wizard");
+
+	focusedButton = nullptr;
+
+	mouseButtonPressedID = 0;
+	keyboardKeyPressedID = 0;
+	offSet = 0;
 }
 
 void MainMenu::DrawMenu()
@@ -105,20 +118,18 @@ int MainMenu::ProceedEventsMainMenu()
 	{
 		if (focusedButton->CompareLabel("Quit"))
 			return 0;
-		else
-		{
-			mouseButtonPressedID = 0;
-			keyboardKeyPressedID = 0;
 
-			if (focusedButton->CompareLabel("New Game"))
-				return 1;
-			else if (focusedButton->CompareLabel("Load Game"))
-				return 2;
-			else if (focusedButton->CompareLabel("Options"))
-				return 3;
-			else if (focusedButton->CompareLabel("Credits"))
-				return 4;
-		}
+		mouseButtonPressedID = 0;
+		keyboardKeyPressedID = 0;
+
+		if (focusedButton->CompareLabel("New Game"))
+			return 1;
+		if (focusedButton->CompareLabel("Load Game"))
+			return 2;
+		if (focusedButton->CompareLabel("Options"))
+			return 3;
+		if (focusedButton->CompareLabel("Credits"))
+			return 4;
 	}
 	mouseButtonPressedID = 0;
 	keyboardKeyPressedID = 0;
@@ -144,13 +155,16 @@ void MainMenu::CloseCharacterSelectionMenu(bool offset)
 	if (warriorSelected == true)
 	{
 		warriorSelected = false;
-		delete characterNameMenuButton;
-		DeleteCharacterSelectionMenu(offset);
+		//delete characterNameMenuButton;
+		//characterNameMenuButton = nullptr;
+		//DeleteCharacterSelectionMenu(offset);
 	}
 	else
 	{
-		delete characterSelectionMenuButton[2];
-		delete characterSelectionMenuButton[3];
+		//delete characterSelectionMenuButton[2];
+		//characterSelectionMenuButton[2] = nullptr;
+		//delete characterSelectionMenuButton[3];
+		//characterSelectionMenuButton[3] = nullptr;
 	}
 	if (focusedButton != nullptr)
 	{
@@ -179,13 +193,13 @@ int MainMenu::ProceedEventsCharacterSelectionMenu(string *outerCharacterName, bo
 	}
 	else
 	{
-		mouseButtonPressedID = 0;
+		//mouseButtonPressedID = 0;
 		//keyboardKeyPressedID = 0;
 	}
 
 	if ((mouseX >= 108 && mouseX <= 612 && mouseY >= 171 && mouseY <= 451))
 	{		
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 3; i++)
 			HighlightButton(characterSelectionMenuButton[i]);
 		HighlightButton(characterNameMenuButton);
 	}
@@ -208,18 +222,22 @@ int MainMenu::ProceedEventsCharacterSelectionMenu(string *outerCharacterName, bo
 				if (warriorSelected == false)
 				{
 					warriorSelected = true;
-					characterNameMenuButton = new Button(369, 211, 607, 241, true, true, characterName);
-					characterSelectionMenuButton[0] = new Button(369, 416, 483, 446, true, false, "Return");
-					characterSelectionMenuButton[1] = new Button(493, 416, 607, 446, true, false, "Confirm");
-					delete characterSelectionMenuButton[3]; // usuniecie guzika z postacia czarodziejki
+					//characterNameMenuButton = new Button(369, 211, 607, 241, true, true, characterName);
+					//characterSelectionMenuButton[0] = new Button(369, 416, 483, 446, true, false, "Return");
+					//characterSelectionMenuButton[1] = new Button(493, 416, 607, 446, true, false, "Confirm");
+					//delete characterSelectionMenuButton[3]; // usuniecie guzika z postacia czarodziejki
+					//characterSelectionMenuButton[3] = nullptr;
 				}
 				else
 				{
 					warriorSelected = false;
-					delete characterNameMenuButton;
-					delete characterSelectionMenuButton[0];
-					delete characterSelectionMenuButton[1];
-					characterSelectionMenuButton[3] = new Button(364, 171, 612, 451, false, false, "Wizard"); // przywrocenia guzika z postacia czarodziejki
+					//delete characterNameMenuButton; 
+					//characterNameMenuButton = nullptr;
+					//delete characterSelectionMenuButton[0];
+					//characterSelectionMenuButton[0] = nullptr;
+					//delete characterSelectionMenuButton[1];
+					//characterSelectionMenuButton[1] = nullptr;
+					//characterSelectionMenuButton[3] = new Button(364, 171, 612, 451, false, false, "Wizard"); // przywrocenia guzika z postacia czarodziejki
 				}
 			}
 			else if (focusedButton->CompareLabel(characterName))	// aktywacja lub deaktywacja pola do wpisywania nazwy postaci
@@ -235,13 +253,13 @@ int MainMenu::ProceedEventsCharacterSelectionMenu(string *outerCharacterName, bo
 			{
 				*outerCharacterName = characterName;
 				*heroClass = warriorSelected;
-				CloseCharacterSelectionMenu(!warriorSelected);
+				//CloseCharacterSelectionMenu(!warriorSelected);
 				//LISTA WARUNKOW KTORA MUSI BYC SPELNIONA ABY ZACZAC GRE
 				return 0;
 			}
 			else if (focusedButton->CompareLabel("Return"))	// powrot do glownego menu
 			{
-				CloseCharacterSelectionMenu(!warriorSelected);
+				//CloseCharacterSelectionMenu(!warriorSelected);
 				return 1;
 			}
 		}
@@ -294,14 +312,14 @@ int MainMenu::ProceedEventsCharacterSelectionMenu(string *outerCharacterName, bo
 
 void MainMenu::LoadCharacterSelectionMenu()
 {
-	characterSelectionMenuButton[2] = new Button(108, 171, 356, 451, true, false, "Warrior");
-	characterSelectionMenuButton[3] = new Button(364, 171, 612, 451, false, false, "Wizard");
+	//characterSelectionMenuButton[2] = new Button(108, 171, 356, 451, true, false, "Warrior");
+	//characterSelectionMenuButton[3] = new Button(364, 171, 612, 451, false, false, "Wizard");
 }
 
 void MainMenu::DeleteCharacterSelectionMenu(bool offset)	// metoda usuwa z pamieci guziki, zmienna offset informuje czy nalezy usuwac ostatni element tablicy czy zostal on juz usuniety
 {
-	for (int i = 0; i < 3 + offset; i++)
-			delete characterSelectionMenuButton[i]; 
+	for (int i = 0; i < 3 + offset; i++);
+			//delete characterSelectionMenuButton[i]; 
 }
 
 void MainMenu::DrawCharacterSelectionMenu()

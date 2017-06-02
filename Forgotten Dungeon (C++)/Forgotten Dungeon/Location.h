@@ -39,6 +39,18 @@ public:
 		}
 
 	}
+	~Location()
+	{
+		while (!(head)->empty())
+		{
+			Obstacle* element = (head)->front();
+			(head)->pop_front();
+			delete element;
+		}
+		delete head;
+
+		al_destroy_bitmap(BMP);
+	}
 
 	void DrawCurrentLocation()
 	{

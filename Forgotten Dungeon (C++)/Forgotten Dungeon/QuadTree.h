@@ -3,6 +3,8 @@
 #include <iterator>
 #include "Obstacle.h"
 
+using namespace std;
+
 class QuadTree
 {
 	QuadTree * I;
@@ -12,7 +14,7 @@ class QuadTree
 
 	list<Obstacle *> *head;
 
-	void GenerateQuadTree(QuadTree *pom, int Floor)
+	static void GenerateQuadTree(QuadTree *pom, int Floor)
 	{
 		pom->I = new QuadTree();
 		pom->II = new QuadTree();
@@ -36,17 +38,77 @@ class QuadTree
 	}
 
 public:
-	QuadTree() {}
+	QuadTree()
+	{
+		I = nullptr;
+		II = nullptr;
+		III = nullptr;
+		IV = nullptr;
+
+		head = nullptr;
+	}
 	QuadTree(int Floor)
 	{
 		GenerateQuadTree(this, Floor);
 	}
+	~QuadTree()
+	{
+		if (head != nullptr)
+		{
+			while (!head->empty())
+			{
+				Obstacle* element = head->front();
+				head->pop_front();
+				delete element;
+			}
+			delete head;
+		}
+	}
+
+	//void DeleteLists(list<Obstacle *> *&headDelete)
+	//{
+	//	while (!(headDelete)->empty())
+	//	{
+	//		Obstacle* element = (headDelete)->front();
+	//		(headDelete)->pop_front();
+	//		delete element;
+	//	}
+	//	delete headDelete;
+	//}
+
+	//void DeleteNodes(QuadTree *&ptr)
+	//{
+	//	if (ptr != nullptr)
+	//	{
+	//		if ((ptr)->I != nullptr)
+	//		{
+	//			DeleteNodes((ptr)->I);
+	//			ptr->I = nullptr;
+	//		}
+	//		if ((ptr)->II != nullptr)
+	//		{
+	//			DeleteNodes((ptr)->II);
+	//			ptr->II = nullptr;
+	//		}
+	//		if ((ptr)->III != nullptr)
+	//		{
+	//			DeleteNodes((ptr)->III);
+	//			ptr->III = nullptr;
+	//		}
+	//		if ((ptr)->IV != nullptr)
+	//		{
+	//			DeleteNodes((ptr)->IV);
+	//			ptr->IV = nullptr;
+	//		}
+	//		delete ptr;
+	//		ptr = nullptr;
+	//	}
+	//}
 
 	void AssignObstaclesToSectors(list<Obstacle *> *pom)
 	{
-		list<Obstacle *>::iterator it;
 		if (!pom->empty())
-			for (it = pom->begin(); it != pom->end(); ++it)
+			for (list<Obstacle *>::iterator it = pom->begin(); it != pom->end(); ++it)
 			{
 				Obstacle * addedElement = new Obstacle(*(*it));
 				list<Obstacle *> *listToUpdate = GetListHead((*it)->GetX1Pos(), (*it)->GetY1Pos());
@@ -131,4 +193,6 @@ public:
 			}
 		}
 	}
+
+	friend class ManagerLocation;
 };
