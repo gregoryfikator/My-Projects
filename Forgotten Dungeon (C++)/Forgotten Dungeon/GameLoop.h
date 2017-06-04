@@ -66,7 +66,7 @@ class GameLoop
 	ManagerLocation		*locationManager;
 	ManagerItem			*itemManager;
 	ManagerSkill		*skillManager;
-
+	// jak starczy czasu zamienic wszystkie na typ Manager, a w Managerze dodac metody virutalne przeladowywane w odpowiednich typach managerow
 public:
 	GameLoop(int ScreenWidth_new, int ScreenHeight_new);
 	~GameLoop();

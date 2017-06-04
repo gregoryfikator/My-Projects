@@ -161,11 +161,15 @@ bool GameLoop::InitResources()
 		hero->AssignNewItem(new Item(itemManager->DropItem()));		
 	}
 
+	skillManager->AquireSkill(hero);
+
 	/*
 	TO DO:
+	- pasek szybkiego dostepu
 	- oskryptowanie okna umiejetnosci
-	- ^^^^^^^^^^^^^ 1. informacje po najechaniu kursorem
-	- ^^^^^^^^^^^^^ 2. umiejetnosci na pasek szybkiego dostepu
+	- ^^^^^^^^^^^^^ 1. dodawanie umiejetnosci na pasek szybkiego dostepu
+	- napisanie klasy przeciwnikow
+	- dodanie generowania przeciwnikow w klasie ManagerLocation, wprowadzic losowe odchylenia statystyk generowanych przeciwnikow
 	- HUD: panele z guzikami (do w³¹czania ekwipunku, okna statystyk, okna menu), panel podgl¹du postaci, panel podgl¹du przeciwnika/NPC po najechaniu kursorem
 	*/
 
@@ -223,6 +227,8 @@ bool GameLoop::GamePlay()
 				{
 					openEquipment = false;
 					openSkillTab = !openSkillTab;
+					if (openSkillTab == false)
+						skillManager->ResetSkillTab();
 				}
 				if (keyboardKeyPressedID == ALLEGRO_KEY_P)
 				{
@@ -244,30 +250,51 @@ bool GameLoop::GamePlay()
 				redraw = false;
 				locationManager->DrawCurrentLocation();
 				hero->DrawCharacter();
+
 				this->DrawHud();
-
 				if (openEquipment == true)
-				{
-					itemManager->CheckEquipmentButtons(MouseX, MouseY, hero, mouseLBPressed);
-					itemManager->CheckCursorOverlayBackpackAndClick(MouseX, MouseY, hero, mouseLBPressed);
-					itemManager->CheckCursorOverlayWearingAndClick(MouseX, MouseY, hero, mouseLBPressed);
-					if (itemManager->CheckRecalculation() == true)
-						itemManager->RecalculateStats(hero);
+				{			
+					if (itemManager->CheckButtons(MouseX, MouseY, hero, mouseLBPressed))
+					{
+						itemManager->CheckCursorOverlayBackpackAndClick(MouseX, MouseY, hero, mouseLBPressed);
+						itemManager->CheckCursorOverlayWearingAndClick(MouseX, MouseY, hero, mouseLBPressed);
+						if (itemManager->CheckRecalculation() == true)
+							itemManager->RecalculateStats(hero);
 
-					itemManager->Draw(hero, resources, allegro_font);
-					//wyswietlanie opisu przedmiotu po najechaniu kursorem
-					if (itemManager->GetOverlayBackpack())
-						itemManager->DrawDescription(MouseX, MouseY, hero->GetItemFromBackpack(itemManager->GetOverlayedItemIndex()), allegro_font);
+						itemManager->Draw(hero, resources, allegro_font);
+
+						//wyswietlanie opisu przedmiotu po najechaniu kursorem
+						if (itemManager->GetOverlayBackpack())
+							itemManager->DrawDescription(MouseX, MouseY, hero->GetItemFromBackpack(itemManager->GetOverlayedItemIndex()), allegro_font);
+						else
+							itemManager->DrawDescription(MouseX, MouseY, hero->GetItemFromEquipment(itemManager->GetOverlayedItemIndex()), allegro_font);
+					}
 					else
-						itemManager->DrawDescription(MouseX, MouseY, hero->GetItemFromEquipment(itemManager->GetOverlayedItemIndex()), allegro_font);
+						openEquipment = false;
 				}
 				else if (openSkillTab == true)
 				{
-					skillManager->CheckCursorOverlayAndClick(MouseX, MouseY);//, hero->GetEq(), mouseLBPressed);
+					if (skillManager->CheckButtons(MouseX, MouseY, hero, mouseLBPressed))
+					{
+						skillManager->CheckCursorOverlayTabAndClick(MouseX, MouseY, hero, mouseLBPressed);
+						skillManager->CheckCursorOverlayDockAndClick(MouseX, MouseY, hero, mouseLBPressed, openSkillTab);
 
-					skillManager->Draw(hero, resources, allegro_font);
-					//wyswietlanie opisu umiejetnosci po najechaniu kursorem
-					skillManager->DrawDescription(MouseX, MouseY, skillManager->GetSkill(), allegro_font);
+						skillManager->Draw(resources, allegro_font);
+
+						skillManager->DrawDockedSkills(MouseX, MouseY, hero, allegro_font, openEquipment, openSkillTab);
+						al_draw_bitmap(resources->ui_quick, 167, 421, 0);
+						skillManager->DrawSelectedSkill(MouseX, MouseY, hero);
+						//wyswietlanie opisu umiejetnosci po najechaniu kursorem
+						skillManager->DrawDescription(MouseX, MouseY, hero, skillManager->GetSkill(), allegro_font);
+					}
+					else
+						openSkillTab = false;
+				}
+
+				if (openSkillTab == false)
+				{
+					skillManager->CheckCursorOverlayDockAndClick(MouseX, MouseY, hero, mouseLBPressed, openSkillTab);
+					skillManager->DrawDescription(MouseX, MouseY, hero, skillManager->GetSkill(), allegro_font);
 				}
 
 				if (debugModeOn == true)	// wlaczenie trybu debugowania wyswietla wspolrzedne postaci oraz kursora
@@ -356,5 +383,10 @@ void GameLoop::DrawHud()
 {
 	al_draw_filled_rounded_rectangle(5, 420, 60, 475, 8, 8, allegro_font->TRANSPARENT_BLACK1);
 	al_draw_rounded_rectangle(5, 420, 60, 475, 8, 8, allegro_font->TRANSPARENT_BLACK3, 2.5);
-	al_draw_bitmap(resources->ui_quick, 167, 422, 0);
+
+	if (openSkillTab == false)
+	{
+		skillManager->DrawDockedSkills(MouseX, MouseY, hero, allegro_font, openEquipment, openSkillTab);
+		al_draw_bitmap(resources->ui_quick, 167, 421, 0);
+	}
 }

@@ -35,6 +35,7 @@ public:
 	friend class MainMenu;
 	friend class Button;
 	friend class GameLoop;
+	friend class Manager;
 	friend class ManagerItem;
 	friend class ManagerSkill;
 };

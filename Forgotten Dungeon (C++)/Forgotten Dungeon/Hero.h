@@ -13,7 +13,7 @@ class Hero :public Character
 
 	Item *eq[20];
 	Item *eqWorn[7];
-	Skill *eqDock[7];
+	Skill *eqDock[6];
 
 	
 public:
@@ -21,11 +21,12 @@ public:
 	{
 		for (int i = 0; i < 20; i++)
 			eq[i] = nullptr;
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 6; i++)
 		{
 			eqDock[i] = nullptr;
 			eqWorn[i] = nullptr;
 		}
+		eqWorn[6] = nullptr;
 
 		heroClass = newHeroClass;
 		heroPortrait = newHeroPortrait;

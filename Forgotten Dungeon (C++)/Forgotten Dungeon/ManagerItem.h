@@ -3,7 +3,6 @@
 
 //#include <allegro5\allegro.h>
 #include <vector>
-#include <list>
 #include <typeinfo>
 #include <fstream>
 #include <sstream>
@@ -13,7 +12,7 @@
 
 class ManagerItem : public Manager
 {
-	list<Item *> *itemList;
+	vector<Item *> *itemList;
 	int overlayedItemIndex;
 	int selectedItemIndex;
 	bool overlayBackpack;
@@ -37,10 +36,9 @@ public:
 	}
 	~ManagerItem()
 	{
-		while (!(itemList)->empty())
+		for (int i = 0; i < itemList->size(); i++)
 		{
-			Item* element = (itemList)->front();
-			(itemList)->pop_front();
+			Item* element = itemList->at(i);
 			delete element;
 		}
 		delete itemList;
@@ -80,7 +78,7 @@ public:
 
 		if (File.good())
 		{
-			itemList = new list<Item *>;
+			itemList = new vector<Item *>;
 			while (File >> flag >> ID >> lvl >> rarity >> hp >> emp >> str >> dur >> dex >> agi >> wis >> chr >> dmg_min >> dmg_max >> def >> descritptionFrameX >> descriptionLines)
 			{
 				string tmp;
@@ -133,7 +131,7 @@ public:
 		// flagi moga byc nie potrzebne dziêki u¿yciu RTTI
 	}
 
-	virtual void Draw(Hero *hero, Resources *resources, ALLEGRO_Font *allegro_font)
+	void Draw(Hero *hero, Resources *resources, ALLEGRO_Font *allegro_font)
 	{
 		// rysowanie ekwipunku
 		al_draw_filled_rectangle(0, 0, 720, 480, allegro_font->TRANSPARENT_BLACK3);
@@ -286,35 +284,39 @@ public:
 			}
 		}
 	}
-	void CheckEquipmentButtons(int mouseX, int mouseY, Hero *hero, bool LMBPressed)
+	bool CheckButtons(int mouseX, int mouseY, Hero *hero, bool LMBPressed)
 	{
-		if (mouseX >= 53 && mouseX <= 75 && mouseY <= 401 && mouseY >= 379)
+		if (LMBPressed)
 		{
-			if (LMBPressed)
+			if (mouseX >= 54 && mouseX <= 80 && mouseY <= 407 && mouseY >= 380)
 			{
 				if (selectedItemIndex != -1)
 				{
 					if (selectedFromBackpack)
 					{
-						//hero->eq[selectedItemIndex]->bmp = nullptr;
 						delete hero->eq[selectedItemIndex];
 						hero->eq[selectedItemIndex] = nullptr;
-						selectedItemIndex = -1;
-						selectedItem = nullptr;
 						selectedFromBackpack = false;
 					}
 					else
 					{
-						//hero->eqWorn[selectedItemIndex]->bmp = nullptr;
 						delete hero->eqWorn[selectedItemIndex];
 						hero->eqWorn[selectedItemIndex] = nullptr;
-						selectedItemIndex = -1;
-						selectedItem = nullptr;
 						recalculate = true;
 					}
+					selectedItemIndex = -1;
+					selectedItem = nullptr;
 				}
 			}
-		}	
+
+			if (mouseX >= 638 && mouseX <= 664 && mouseY >= 380 && mouseY <= 407)
+			{
+				selectedItemIndex = -1;
+				selectedItem = nullptr;
+				return false;
+			}
+		}
+		return true;
 	}
 	void CheckCursorOverlayBackpackAndClick(int mouseX, int mouseY, Hero *hero, bool LMBPressed) // funkcja jest 'nieelegancko' wykonana ze wzgledu na ograniczenia czasowe
 	{
@@ -340,7 +342,7 @@ public:
 									selectedFromBackpack = true;
 									selectedItem = hero->eq[i];
 									selectedItem->selected = true;
-									cout << typeid(*(hero->eq[i]->original)).name() << endl;
+									cout << typeid(*hero->eq[i]->original).name() << endl;
 								}
 								else if (selectedItem == hero->eq[i])
 								{
@@ -348,7 +350,6 @@ public:
 									selectedFromBackpack = false;
 									selectedItem->selected = false;
 									selectedItem = nullptr;
-									selectedFromBackpack = false;
 								}
 								else if (selectedItem != nullptr && selectedItem != hero->eq[i])
 								{
@@ -361,13 +362,14 @@ public:
 										selectedFromBackpack = false;
 										recalculate = true;
 									}
-									else if (typeid(*(selectedItem->original)).name() == typeid(*(hero->eq[i]->original)).name())
+									else if (typeid(*selectedItem->original).name() == typeid(*hero->eq[i]->original).name())
 									{
 										hero->SwapItems(selectedItem, hero->eq[i], i, selectedItemIndex, selectedFromBackpack);
 										selectedItem = nullptr;
 										hero->eq[i]->selected = false;
 										selectedItemIndex = -1;
-										recalculate = true;								
+										recalculate = true;		
+										selectedFromBackpack = false;
 									}
 								}
 
@@ -463,7 +465,7 @@ public:
 					selectedItemIndex = slot;
 					selectedItem = hero->eqWorn[slot];
 					selectedItem->selected = true;
-					cout << typeid(*(hero->eqWorn[slot]->original)).name() << endl;
+					cout << typeid(*hero->eqWorn[slot]->original).name() << endl;
 				}
 				else if (selectedItem == hero->eqWorn[slot])
 				{
@@ -473,7 +475,7 @@ public:
 				}
 				else
 				{
-					if (typeid(*(selectedItem->original)).name() == typeid(*(hero->eqWorn[slot]->original)).name())
+					if (typeid(*selectedItem->original).name() == typeid(*hero->eqWorn[slot]->original).name())
 					{
 						if (selectedFromBackpack == true)
 							hero->SwapItems(selectedItem, hero->eqWorn[slot], slot, selectedItemIndex, selectedFromBackpack);
@@ -481,6 +483,7 @@ public:
 							hero->SwapItems2(selectedItem, hero->eqWorn[slot], slot, selectedItemIndex);
 						
 						selectedItem = nullptr;
+						selectedItemIndex = -1;
 						selectedFromBackpack = false;
 						hero->eqWorn[slot]->selected = false;
 						recalculate = true;
@@ -491,7 +494,7 @@ public:
 		}
 		if (selectedItem != nullptr && LMBPressed)
 		{
-			if (strcmp(typeid(*(selectedItem->original)).name(), type) == 0)
+			if (strcmp(typeid(*selectedItem->original).name(), type) == 0)
 			{
 				if (slot == 6 && selectedItemIndex == slot - 1 || slot == 5 && selectedItemIndex == slot + 1)
 					hero->SwapItems2(selectedItem, hero->eqWorn[slot], slot, selectedItemIndex);
@@ -575,10 +578,6 @@ public:
 	Item DropItem() //metoda losuje przedmiot zdobywany po pokonaniu przeciwnika
 	{
 		int stop = rand() % itemList->size();
-		int i = 0;
-
-		for (list<Item *>::iterator it = itemList->begin(); it != itemList->end(); ++it, i++)
-			if (i == stop)
-				return **it;	
+		return *itemList->at(stop);
 	} 
 };
