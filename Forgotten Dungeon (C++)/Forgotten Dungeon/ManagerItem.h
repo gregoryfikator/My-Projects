@@ -22,6 +22,8 @@ class ManagerItem : public Manager
 
 	Item *selectedItem;
 
+	int XPBarLength;
+
 public:
 	ManagerItem(): Manager()
 	{
@@ -31,6 +33,8 @@ public:
 		overlayBackpack = false;
 		selectedFromBackpack = false;
 		selectedItem = nullptr;
+
+		XPBarLength = 0;
 
 		recalculate = false;
 	}
@@ -131,12 +135,17 @@ public:
 		// flagi moga byc nie potrzebne dziêki u¿yciu RTTI
 	}
 
+	void ChangeXPBarLength(int exp, int threshold)
+	{
+		XPBarLength = (int)floor((439 - 282)* exp / threshold);
+	}
+
 	void Draw(Hero *hero, Resources *resources, ALLEGRO_Font *allegro_font)
 	{
 		// rysowanie ekwipunku
 		al_draw_filled_rectangle(0, 0, 720, 480, allegro_font->TRANSPARENT_BLACK3);
 		al_draw_bitmap(resources->ui_eq, 30, 43, 0);
-		al_draw_filled_rounded_rectangle(282, 341, 282 + 20, 362, 2, 2, allegro_font->LIGHT_GREEN); //al_draw_filled_rounded_rectangle(282, 341, 282 + x_percent_part, 362, 2, 2, al_map_rgb(45, 210, 55));
+		al_draw_filled_rounded_rectangle(282, 341, 282 + XPBarLength, 362, 2, 2, allegro_font->LIGHT_GREEN); //X: 437 //al_draw_filled_rounded_rectangle(282, 341, 282 + x_percent_part, 362, 2, 2, al_map_rgb(45, 210, 55));
 		al_draw_bitmap(resources->ui_xp_bar, 259, 305, 0);
 
 		// efekt podswietlenia t³a przedmiotow w ekwipunku - realizowany w metodzie DrawItemsFromBackpack()
@@ -311,7 +320,13 @@ public:
 
 			if (mouseX >= 638 && mouseX <= 664 && mouseY >= 380 && mouseY <= 407)
 			{
+				if (selectedFromBackpack == true && hero->eq[selectedItemIndex] != nullptr)
+						hero->eq[selectedItemIndex]->selected = false;
+				else if (hero->eqWorn[selectedItemIndex] != nullptr)
+						hero->eqWorn[selectedItemIndex]->selected = false;
+
 				selectedItemIndex = -1;
+				selectedFromBackpack = false;
 				selectedItem = nullptr;
 				return false;
 			}
@@ -341,8 +356,7 @@ public:
 									selectedItemIndex = i;
 									selectedFromBackpack = true;
 									selectedItem = hero->eq[i];
-									selectedItem->selected = true;
-									cout << typeid(*hero->eq[i]->original).name() << endl;
+									selectedItem->selected = true;			
 								}
 								else if (selectedItem == hero->eq[i])
 								{
@@ -465,7 +479,6 @@ public:
 					selectedItemIndex = slot;
 					selectedItem = hero->eqWorn[slot];
 					selectedItem->selected = true;
-					cout << typeid(*hero->eqWorn[slot]->original).name() << endl;
 				}
 				else if (selectedItem == hero->eqWorn[slot])
 				{
@@ -575,8 +588,11 @@ public:
 		}
 	}
 
-	Item DropItem() //metoda losuje przedmiot zdobywany po pokonaniu przeciwnika
+	Item DropItem(bool startingItem = false) //metoda losuje przedmiot zdobywany po pokonaniu przeciwnika
 	{
+		if (startingItem == true)
+			return *itemList->at(1);
+
 		int stop = rand() % itemList->size();
 		return *itemList->at(stop);
 	} 

@@ -33,6 +33,15 @@ struct Resources
 	ALLEGRO_BITMAP *ui_quick = al_load_bitmap("data//textures//ui_quick.png");
 	ALLEGRO_BITMAP *ui_xp_bar = al_load_bitmap("data//textures//ui_xp_bar.png");
 	ALLEGRO_BITMAP *ui_bin = al_load_bitmap("data//textures//ui_bin.png");
+
+	ALLEGRO_SAMPLE_ID soundtrack1ID, soundtrack2ID;
+	ALLEGRO_SAMPLE *soundtrack1 = al_load_sample("data//sounds//main00.ogg");
+	ALLEGRO_SAMPLE *soundtrack2 = al_load_sample("data//sounds//main01.ogg");
+
+
+	int	experienceThreshold[5] = { 100, 250, 500, 1000, 2000};
+
+
 	//return true;
 //}
 	~Resources()
@@ -48,6 +57,9 @@ struct Resources
 		al_destroy_bitmap(heroWarrior);
 		al_destroy_bitmap(cursor);
 		al_destroy_bitmap(background);
+
+		al_destroy_sample(soundtrack1);
+		al_destroy_sample(soundtrack2);
 	}
 
 };

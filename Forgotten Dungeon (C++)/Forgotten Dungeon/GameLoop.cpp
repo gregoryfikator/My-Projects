@@ -7,14 +7,14 @@ GameLoop::GameLoop(int ScreenWidth_new, int ScreenHeight_new)
 	PLAY_GAME	= false;
 	QUIT_GAME	= false;
 
-	ScreenWidth		= ScreenWidth_new;
-	ScreenHeight	= ScreenHeight_new;
-	MouseX = ScreenWidth / 2;
-	MouseY = ScreenHeight / 2;
+	ScreenWidth				= ScreenWidth_new;
+	ScreenHeight			= ScreenHeight_new;
+	MouseX					= ScreenWidth / 2;
+	MouseY					= ScreenHeight / 2;
 
-	mouseButtonPressedID = 0;
-	mouseLBPressed = false;
-	keyboardKeyPressedID = 0;
+	mouseButtonPressedID	= 0;
+	mouseLBPressed			= false;
+	keyboardKeyPressedID	= 0;
 
 	allegro_init	= new ALLEGRO_Init();
 
@@ -34,21 +34,31 @@ GameLoop::GameLoop(int ScreenWidth_new, int ScreenHeight_new)
 
 	resources = new Resources();
 
-	redraw = false;
-	heroClass = true;
-	direction = NONE;
-	hero = nullptr;
-	locationManager = nullptr;
-	itemManager = nullptr;
-	skillManager = nullptr;
+	direction			= NONE;
+	previousDirection	= NONE;
 
-	mainmenu		= new MainMenu(event_queue, allegro_font, resources->background, resources->cursor, resources->heroWarrior, resources->heroWizard);
+	redraw				= true;
+	heroClass			= true;
 	
-	STEP			= 3;
+	hero				= nullptr;
+	locationManager		= nullptr;
+	itemManager			= nullptr;
+	skillManager		= nullptr;
+	fightManager		= nullptr;
+
+	mainmenu			= new MainMenu(event_queue, allegro_font, resources->background, resources->cursor, resources->heroWarrior, resources->heroWizard, resources->soundtrack1, &resources->soundtrack1ID);
+	
+	STEP		= 3;
+
+	heroAnimationCurrentFrame	= 1;
+	heroAnimationDelay			= 7;
+	heroAnimationFrameCount		= 0;
 
 	debugModeOn		= false;
 	openEquipment	= false;
 	openSkillTab	= false;
+	fightInProgress = false;
+	pressedEscape	= false;
 }
 
 GameLoop::~GameLoop()
@@ -62,6 +72,7 @@ GameLoop::~GameLoop()
 	delete itemManager;
 	delete skillManager;
 	delete locationManager;
+	delete fightManager;
 	
 	al_destroy_event_queue(event_queue);
 	al_destroy_timer(timer);
@@ -143,7 +154,7 @@ bool GameLoop::InitResources()
 	srand(time(nullptr));
 	// TUTAJ BEDA WYKORZYSTYWANE WATKI
 	locationManager = new ManagerLocation();
-	locationManager->Init("data//location//village001.jpg", "data//location//village001");
+	locationManager->Init("data//location//village001.jpg", "data//location//village001", "data//character//characterlist.txt");
 
 	itemManager = new ManagerItem();
 	itemManager->Init();
@@ -151,105 +162,91 @@ bool GameLoop::InitResources()
 	skillManager = new ManagerSkill();
 	skillManager->Init();
 
-	if (heroClass)//zmienic sciezke po dodaniu animacji ruchu postaci
-		hero = new Hero(outerCharacterName, heroClass, "projekt//characters//sprite//test.png", ScreenWidth / 2, ScreenHeight / 2, resources->heroWarrior, LOAD_GAME);
-	else
-		hero = new Hero(outerCharacterName, heroClass, "projekt//characters//sprite//test.png", ScreenWidth / 2, ScreenHeight / 2, resources->heroWizard, LOAD_GAME);
+	fightManager = new ManagerFight();
 
-	for (int i = 0; i < 15; i++)
-	{
-		hero->AssignNewItem(new Item(itemManager->DropItem()));		
-	}
+	if (heroClass)
+		hero = new Hero(outerCharacterName, heroClass, "data//character//bmp//heroSprite.png", ScreenWidth / 2, ScreenHeight / 2, resources->heroWarrior, LOAD_GAME);
+	else
+		hero = new Hero(outerCharacterName, heroClass, "data//character//bmp//heroSprite.png", ScreenWidth / 2, ScreenHeight / 2, resources->heroWizard, LOAD_GAME);
+
+	hero->AssignNewItem(new Item(itemManager->DropItem(true)));		
 
 	skillManager->AquireSkill(hero);
 
-	/*
-	TO DO:
-	- pasek szybkiego dostepu
-	- oskryptowanie okna umiejetnosci
-	- ^^^^^^^^^^^^^ 1. dodawanie umiejetnosci na pasek szybkiego dostepu
-	- napisanie klasy przeciwnikow
-	- dodanie generowania przeciwnikow w klasie ManagerLocation, wprowadzic losowe odchylenia statystyk generowanych przeciwnikow
-	- HUD: panele z guzikami (do w³¹czania ekwipunku, okna statystyk, okna menu), panel podgl¹du postaci, panel podgl¹du przeciwnika/NPC po najechaniu kursorem
-	*/
-
-
-	//koordynaty bohatera po smierci -> (861, 168)
-	direction = NONE;
-	redraw = true;
-
+	al_stop_sample(&resources->soundtrack1ID);
+	al_play_sample(resources->soundtrack2, 0.5, 0.0, 1.0, ALLEGRO_PLAYMODE_LOOP, &resources->soundtrack2ID);
+	//koordynaty bohatera po smierci -> (861, 168) // w przyszlosci npc umozliwiajacy wskrzeszanie
 	return true;
 }
 
 bool GameLoop::GamePlay()
 {
-	ALLEGRO_EVENT_QUEUE *event_queue2 = al_create_event_queue();
-	al_register_event_source(event_queue2, al_get_mouse_event_source());
 	if (InitResources())
 	{
 		al_start_timer(timer);
 		do
 		{
-			ALLEGRO_EVENT ev;
-			al_wait_for_event(event_queue, &ev);
-			if (ev.type == ALLEGRO_EVENT_MOUSE_AXES)
-			{
-				MouseX = ev.mouse.x;
-				MouseY = ev.mouse.y;
-			}
-			if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
-			{
-				mouseButtonPressedID = ev.mouse.button;
+			GetAndProceedEvents();
 
-				if(mouseButtonPressedID == 1)
-				{
-					mouseLBPressed = true;
-				}
-
-				mouseButtonPressedID = 0;
-			}
-			if (ev.type == ALLEGRO_EVENT_TIMER)
-			{
-				if (openEquipment == false && openSkillTab == false)
-					HeroMovement();
-				redraw = true;
-			}
-			if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
-			{
-				keyboardKeyPressedID = ev.keyboard.keycode;
-
-				if (keyboardKeyPressedID == ALLEGRO_KEY_I)
-				{
-					openSkillTab = false;
-					openEquipment = !openEquipment;
-				}
-				if (keyboardKeyPressedID == ALLEGRO_KEY_T)
-				{
-					openEquipment = false;
-					openSkillTab = !openSkillTab;
-					if (openSkillTab == false)
-						skillManager->ResetSkillTab();
-				}
-				if (keyboardKeyPressedID == ALLEGRO_KEY_P)
-				{
-					debugModeOn = !debugModeOn;
-				}
-				if (keyboardKeyPressedID == ALLEGRO_KEY_ESCAPE)
-				{
-					break;
-				}
-
-
-				keyboardKeyPressedID = 0;
-			}
-
-			
-
-			if (redraw)// && al_is_event_queue_empty(event_queue))
+			if (redraw)
 			{
 				redraw = false;
 				locationManager->DrawCurrentLocation();
-				hero->DrawCharacter();
+				locationManager->DrawSpawnedEnemies();
+
+				al_draw_bitmap(hero->getHeroAnimationFrame(heroAnimationCurrentFrame), hero->GetX1Pos(), hero->GetY1Pos(), 0);
+
+				if (locationManager->GetFightStatus())	// true -> walka
+				{
+					al_draw_filled_rectangle(0, 0, 150, 150, allegro_font->DARK_RED);
+					if (fightInProgress == false)
+					{
+						fightManager->Init(hero, static_cast<Enemy *>(locationManager->GetEnemy()));
+						fightInProgress = true;
+					}
+					fightManager->Draw(resources, allegro_font);
+					if (fightManager->Fight() == true)	// wygrana walka
+					{
+						
+						if (fightManager->GetFightStatus() == true)
+						{
+							if (fightManager->CheckIfHeroEscaped() == false)
+							{
+								// drop itemow, ++exp
+								hero->heroStats->exp += 10 * locationManager->GetEnemy()->GetLevel();
+								itemManager->ChangeXPBarLength(hero->heroStats->exp, resources->experienceThreshold[hero->GetLevel() - 1]);
+								fightManager->EndFight();
+								if (rand() % 100 % 2 == 0)
+									hero->AssignNewItem(new Item(itemManager->DropItem()));
+
+								skillManager->DropPotions();
+								locationManager->KillEnemy();
+								locationManager->RespawnEnemy();
+							}
+							else
+							{
+								this->Escape();
+								fightManager->ResetHeroEscaped();
+							}
+
+							locationManager->SetFightStatus(false);
+							fightInProgress = false;
+						}
+					}
+					else 
+					{
+						if (fightManager->GetFightStatus() == true)
+						{
+							pressedEscape = true;// koniec gry
+							QUIT_GAME = true;
+
+							fightManager->EndFight();
+							locationManager->SetFightStatus(false);
+							fightInProgress = false;
+						}
+					}
+					
+				}
 
 				this->DrawHud();
 				if (openEquipment == true)
@@ -271,6 +268,12 @@ bool GameLoop::GamePlay()
 					}
 					else
 						openEquipment = false;
+
+					if (hero->heroStats->exp >= resources->experienceThreshold[hero->GetLevel() - 1])
+					{
+						hero->heroStats->exp = hero->heroStats->exp - resources->experienceThreshold[hero->GetLevel() - 1];
+						hero->IncreaseLevel();
+					}
 				}
 				else if (openSkillTab == true)
 				{
@@ -312,14 +315,79 @@ bool GameLoop::GamePlay()
 				al_draw_bitmap(resources->cursor, MouseX, MouseY, 0);
 
 				al_flip_display(); // wyœwietlenie aktualnego bufora na ekran
-				al_clear_to_color(al_map_rgb(0, 0, 0)); // wyczyszczenie aktualnego bufora ekranu
-				
-			}
-			
-		} while (true);
+				al_clear_to_color(al_map_rgb(0, 0, 0)); // wyczyszczenie aktualnego bufora ekranu			
+			}		
 
+			if (pressedEscape == true)
+			{
+				pressedEscape = false;
+				break;
+			}
+		} while (true);
 	}
 	return false;
+}
+
+void GameLoop::GetAndProceedEvents()
+{
+	ALLEGRO_EVENT ev;
+	al_wait_for_event(event_queue, &ev);
+	if (ev.type == ALLEGRO_EVENT_MOUSE_AXES)
+	{
+		MouseX = ev.mouse.x;
+		MouseY = ev.mouse.y;
+	}
+	if (ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN)
+	{
+		mouseButtonPressedID = ev.mouse.button;
+
+		if (mouseButtonPressedID == 1)
+		{
+			mouseLBPressed = true;
+		}
+
+		mouseButtonPressedID = 0;
+	}
+	if (ev.type == ALLEGRO_EVENT_TIMER)
+	{
+		if (openEquipment == false && openSkillTab == false && locationManager->GetFightStatus() == false)
+		{
+			HeroMovement();
+			HeroMovementAnimation();
+		}
+		redraw = true;
+	}
+	if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
+	{
+		keyboardKeyPressedID = ev.keyboard.keycode;
+
+		if (locationManager->GetFightStatus() == false)
+		{
+			if (keyboardKeyPressedID == ALLEGRO_KEY_I)
+			{
+				openSkillTab = false;
+				openEquipment = !openEquipment;
+			}
+			if (keyboardKeyPressedID == ALLEGRO_KEY_T)
+			{
+				openEquipment = false;
+				openSkillTab = !openSkillTab;
+				if (openSkillTab == false)
+					skillManager->ResetSkillTab();
+			}
+			if (keyboardKeyPressedID == ALLEGRO_KEY_P)
+			{
+				debugModeOn = !debugModeOn;
+			}
+			if (keyboardKeyPressedID == ALLEGRO_KEY_ESCAPE)
+			{
+				pressedEscape = true;
+			}
+		}
+		else if (keyboardKeyPressedID == ALLEGRO_KEY_1 || keyboardKeyPressedID == ALLEGRO_KEY_2 || keyboardKeyPressedID == ALLEGRO_KEY_3 || keyboardKeyPressedID == ALLEGRO_KEY_4 || keyboardKeyPressedID == ALLEGRO_KEY_5 || keyboardKeyPressedID == ALLEGRO_KEY_6)
+			fightManager->SetUsedSkill(keyboardKeyPressedID - ALLEGRO_KEY_1);
+		keyboardKeyPressedID = 0;
+	}
 }
 
 void GameLoop::HeroMovement()
@@ -331,6 +399,9 @@ void GameLoop::HeroMovement()
 
 	ALLEGRO_KEYBOARD_STATE keyboard;
 	al_get_keyboard_state(&keyboard);
+
+	previousDirection = direction;
+	direction = NONE;
 
 	if (al_key_down(&keyboard, ALLEGRO_KEY_W))
 	{
@@ -375,18 +446,93 @@ void GameLoop::HeroMovement()
 			else if (mapX == 780 && heroX <= 685 || mapX == 0 && (heroX < 360 || heroX == 0))
 				hero->SetXPos(STEP);
 		}
+	}	
+}
+
+void GameLoop::HeroMovementAnimation()
+{
+	if (direction == NONE)
+	{
+		heroAnimationCurrentFrame = 1;
+		heroAnimationFrameCount = 0;
 	}
-	direction = NONE;
+	else if (direction == KEY_S)
+	{
+		if (previousDirection != direction)
+		{
+			heroAnimationFrameCount = 0;
+			heroAnimationCurrentFrame = 1;
+		}
+
+		if (++heroAnimationFrameCount >= heroAnimationDelay)
+		{
+			if (++heroAnimationCurrentFrame >= 3)
+				heroAnimationCurrentFrame = 0;
+
+			heroAnimationFrameCount = 0;
+		}
+	}
+	else if (direction == KEY_A)
+	{
+		if (previousDirection != direction)
+		{
+			heroAnimationFrameCount = 0;
+			heroAnimationCurrentFrame = 4;
+		}
+
+		if (++heroAnimationFrameCount >= heroAnimationDelay)
+		{
+			if (++heroAnimationCurrentFrame >= 6)
+				heroAnimationCurrentFrame = 3;
+
+			heroAnimationFrameCount = 0;
+		}
+	}
+	else if (direction == KEY_D)
+	{
+		if (previousDirection != direction)
+		{
+			heroAnimationFrameCount = 0;
+			heroAnimationCurrentFrame = 7;
+		}
+
+		if (++heroAnimationFrameCount >= heroAnimationDelay)
+		{
+			if (++heroAnimationCurrentFrame >= 9)
+				heroAnimationCurrentFrame = 6;
+
+			heroAnimationFrameCount = 0;
+		}
+	}
+	else if (direction == KEY_W)
+	{
+		if (previousDirection != direction)
+		{
+			heroAnimationFrameCount = 0;
+			heroAnimationCurrentFrame = 10;
+		}
+
+		if (++heroAnimationFrameCount >= heroAnimationDelay)
+		{
+			if (++heroAnimationCurrentFrame >= 12)
+				heroAnimationCurrentFrame = 9;
+
+			heroAnimationFrameCount = 0;
+		}
+	}
 }
 
 void GameLoop::DrawHud()
 {
-	al_draw_filled_rounded_rectangle(5, 420, 60, 475, 8, 8, allegro_font->TRANSPARENT_BLACK1);
-	al_draw_rounded_rectangle(5, 420, 60, 475, 8, 8, allegro_font->TRANSPARENT_BLACK3, 2.5);
-
 	if (openSkillTab == false)
 	{
 		skillManager->DrawDockedSkills(MouseX, MouseY, hero, allegro_font, openEquipment, openSkillTab);
 		al_draw_bitmap(resources->ui_quick, 167, 421, 0);
 	}
+}
+
+void GameLoop::Escape()
+{
+	hero->SetCharacterStartPoint(360, 240);
+	locationManager->GetCurrentLocation()->EscapeToStartPoint();
 }

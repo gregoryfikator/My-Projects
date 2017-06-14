@@ -375,12 +375,14 @@ public:
 
 	void AquireSkill(Hero *hero)
 	{
-		
-		for (int i = 0; i < 4; i++)
-		{
-			int stop = rand() % skillList->size();
-			hero->eqDock[i] = skillList->at(stop);
-		}
+		hero->eqDock[0] = skillList->at(9);		//normal attack
+		hero->eqDock[3] = skillList->at(0);		//health potion
+		hero->eqDock[4] = skillList->at(3);		//energy potion
+		hero->eqDock[5] = skillList->at(18);	//escape
+
+		skillList->at(0)->quantity = 5;
+		skillList->at(3)->quantity = 5;
+
 	}
 
 	void ProceedSelection(Hero *hero, int slot, bool LMBPressed, bool ToDock)
@@ -510,8 +512,6 @@ public:
 	
 	void CheckCursorOverlayTabAndClick(int mouseX, int mouseY, Hero *hero, bool LMBPressed) // funkcja jest 'nieelegancko' wykonana ze wzgledu na ograniczenia czasowe
 	{
-		//if (mouseX >= 79 && mouseX <= 652 && mouseY >= 130 && mouseY <= 172)
-		//{
 		overlayDock = false;
 			if (mouseX >= 79 && mouseX <= 121 && mouseY >= 130 && mouseY <= 172)	// 1W-1S - skill nr 10
 			{
@@ -519,14 +519,6 @@ public:
 				position = RIGHT;
 
 				ProceedSelection(hero, 9, LMBPressed, false);
-				//item_skill_description(10, mousex, mousey, potion_skill, y, font20, font12, 1, al_map_rgba(0, 0, 0, 245));
-				//if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				//{
-				//	eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[9];
-				//	ITEM_SELECTED_DOCK = 0;
-				//}
-
-
 			}
 			else if (mouseX >= 134 && mouseX <= 176 && mouseY >= 130 && mouseY <= 172)	// 1W-2S - skill nr 11
 			{
@@ -534,25 +526,12 @@ public:
 				position = RIGHT;
 
 				ProceedSelection(hero, 10, LMBPressed, false);
-				//item_skill_description(11, mousex, mousey, potion_skill, y, font20, font12, 1, al_map_rgba(0, 0, 0, 245));
-				//if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				//{
-				//	eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[10];
-				//	ITEM_SELECTED_DOCK = 0;
-				//}
-
 			}
 			else if (mouseX >= 189 && mouseX <= 231 && mouseY >= 130 && mouseY <= 172)	// 1W-3S - skill nr 12
 			{
 				overlayedSkillIndex = 11;
 				position = RIGHT;
 				ProceedSelection(hero, 11, LMBPressed, false);
-				/*item_skill_description(12, mousex, mousey, potion_skill, y, font20, font12, 1, al_map_rgba(0, 0, 0, 245));
-				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				{
-					eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[11];
-					ITEM_SELECTED_DOCK = 0;
-				}*/
 			}
 			else if (mouseX >= 283 && mouseX <= 325 && mouseY >= 130 && mouseY <= 172)	// 1W-4S - skill nr 14
 			{
@@ -560,12 +539,6 @@ public:
 				position = MIDDLE;
 
 				ProceedSelection(hero, 13, LMBPressed, false);
-				/*item_skill_description(14, mousex, mousey, potion_skill, y, font20, font12, 2, al_map_rgba(0, 0, 0, 245));
-				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				{
-					eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[13];
-					ITEM_SELECTED_DOCK = 0;
-				}*/
 			}
 			else if (mouseX >= 338 && mouseX <= 380 && mouseY >= 130 && mouseY <= 172)	// 1W-5S - skill nr 16
 			{
@@ -573,12 +546,6 @@ public:
 				position = MIDDLE;
 
 				ProceedSelection(hero, 15, LMBPressed, false);
-				/*item_skill_description(16, mousex, mousey, potion_skill, y, font20, font12, 2, al_map_rgba(0, 0, 0, 245));
-				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				{
-					eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[15];
-					ITEM_SELECTED_DOCK = 0;
-				}*/
 			}
 			else if (mouseX >= 393 && mouseX <= 435 && mouseY >= 130 && mouseY <= 172)	// 1W-6S - skill nr 17
 			{
@@ -586,12 +553,6 @@ public:
 				position = MIDDLE;
 
 				ProceedSelection(hero, 16, LMBPressed, false);
-				/*item_skill_description(17, mousex, mousey, potion_skill, y, font20, font12, 2, al_map_rgba(0, 0, 0, 245));
-				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				{
-					eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[16];
-					ITEM_SELECTED_DOCK = 0;
-				}*/
 			}
 			else if (mouseX >= 500 && mouseX <= 542 && mouseY >= 130 && mouseY <= 172)	// 1W-7S - skill nr 1
 			{
@@ -599,15 +560,6 @@ public:
 				position = LEFT;
 
 				ProceedSelection(hero, 0, LMBPressed, false);
-				/*item_skill_description(1, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
-				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				{
-					if (potion_skill[0].quantity > 0)
-					{
-						eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[0];
-						ITEM_SELECTED_DOCK = 0;
-					}
-				}*/
 			}
 			else if (mouseX >= 555 && mouseX <= 597 && mouseY >= 130 && mouseY <= 172)	// 1W-8S - skill nr 2
 			{
@@ -615,15 +567,6 @@ public:
 				position = LEFT;
 
 				ProceedSelection(hero, 1, LMBPressed, false);
-				/*item_skill_description(2, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
-				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				{
-					if (potion_skill[1].quantity > 0)
-					{
-						eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[1];
-						ITEM_SELECTED_DOCK = 0;
-					}
-				}*/
 			}
 			else if (mouseX >= 610 && mouseX <= 652 && mouseY >= 130 && mouseY <= 172)	// 1W-9S - skill nr 3
 			{
@@ -631,19 +574,7 @@ public:
 				position = LEFT;
 
 				ProceedSelection(hero, 2, LMBPressed, false);
-				/*item_skill_description(3, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
-				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				{
-					if (potion_skill[2].quantity > 0)
-					{
-						eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[2];
-						ITEM_SELECTED_DOCK = 0;
-					}
-				}*/
 			}
-		//}
-		//else if (mouseX >= 79 && mouseX <= 652 && mouseY >= 200 && mouseY <= 242)
-		//{
 			else if (mouseX >= 79 && mouseX <= 121 && mouseY >= 200 && mouseY <= 242)	// 2W-1S - puste miejsce na umiejetnosc
 			{
 				;
@@ -655,12 +586,6 @@ public:
 				position = RIGHT;
 
 				ProceedSelection(hero, 12, LMBPressed, false);
-				//item_skill_description(13, mousex, mousey, potion_skill, y, font20, font12, 1, al_map_rgba(0, 0, 0, 245));
-				//if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				//{
-				//	eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[12];
-				//	ITEM_SELECTED_DOCK = 0;
-				//}
 			}
 			else if (mouseX >= 189 && mouseX <= 231 && mouseY >= 200 && mouseY <= 242)	// 2W-3S - puste miejsce na umiejetnosc
 			{
@@ -673,12 +598,6 @@ public:
 				position = MIDDLE;
 
 				ProceedSelection(hero, 14, LMBPressed, false);
-				/*item_skill_description(15, mousex, mousey, potion_skill, y, font20, font12, 2, al_map_rgba(0, 0, 0, 245));
-				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				{
-					eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[14];
-					ITEM_SELECTED_DOCK = 0;
-				}*/
 			}
 			else if (mouseX >= 338 && mouseX <= 380 && mouseY >= 200 && mouseY <= 242)	// 2W-5S - skill nr 18
 			{
@@ -686,12 +605,6 @@ public:
 				position = MIDDLE;
 
 				ProceedSelection(hero, 17, LMBPressed, false);
-				/*item_skill_description(18, mousex, mousey, potion_skill, y, font20, font12, 2, al_map_rgba(0, 0, 0, 245));
-				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				{
-					eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[17];
-					ITEM_SELECTED_DOCK = 0;
-				}*/
 			}
 			else if (mouseX >= 393 && mouseX <= 435 && mouseY >= 200 && mouseY <= 242)	// 2W-6S - puste miejsce na umiejetnosc
 			{
@@ -704,15 +617,6 @@ public:
 				position = LEFT;
 
 				ProceedSelection(hero, 3, LMBPressed, false);
-				/*item_skill_description(4, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
-				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				{
-					if (potion_skill[3].quantity > 0)
-					{
-						eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[3];
-						ITEM_SELECTED_DOCK = 0;
-					}
-				}*/
 			}
 			else if (mouseX >= 555 && mouseX <= 597 && mouseY >= 200 && mouseY <= 242)	// 2W-8S - skill nr 5
 			{
@@ -720,15 +624,6 @@ public:
 				position = LEFT;
 
 				ProceedSelection(hero, 4, LMBPressed, false);
-				/*item_skill_description(5, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
-				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				{
-					if (potion_skill[4].quantity > 0)
-					{
-						eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[4];
-						ITEM_SELECTED_DOCK = 0;
-					}
-				}*/
 			}
 			else if (mouseX >= 610 && mouseX <= 652 && mouseY >= 200 && mouseY <= 242)	// 2W-9S - skill nr 6
 			{
@@ -736,19 +631,7 @@ public:
 				position = LEFT;
 
 				ProceedSelection(hero, 5, LMBPressed, false);
-				/*item_skill_description(6, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
-				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				{
-					if (potion_skill[5].quantity > 0)
-					{
-						eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[5];
-						ITEM_SELECTED_DOCK = 0;
-					}
-				}*/
 			}
-		//}
-		//else if (mouseX >= 79 && mouseX <= 652 && mouseY >= 270 && mouseY <= 312)
-		//{
 			else if (mouseX >= 79 && mouseX <= 121 && mouseY >= 270 && mouseY <= 312)	// 3W-1S - puste miejsce na umiejetnosc
 			{
 				;
@@ -775,12 +658,6 @@ public:
 				position = MIDDLE;
 
 				ProceedSelection(hero, 18, LMBPressed, false);
-				/*item_skill_description(19, mousex, mousey, potion_skill, y, font20, font12, 2, al_map_rgba(0, 0, 0, 245));
-				if (ITEM_SELECTED_DOCK != 0 && ev.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN && ev.mouse.button == 1)
-				{
-					eq_dock[ITEM_SELECTED_DOCK - 1] = potion_skill[18];
-					ITEM_SELECTED_DOCK = 0;
-				}*/
 			}
 			else if (mouseX >= 393 && mouseX <= 435 && mouseY >= 270 && mouseY <= 312)	// 3W-6S - puste miejsce na umiejetnosc
 			{
@@ -793,7 +670,6 @@ public:
 				position = LEFT;
 
 				ProceedSelection(hero, 6, LMBPressed, false);
-				//item_skill_description(7, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
 
 			}
 			else if (mouseX >= 555 && mouseX <= 597 && mouseY >= 270 && mouseY <= 312)	// 3W-8S - skill nr 8
@@ -802,8 +678,6 @@ public:
 				position = LEFT;
 
 				ProceedSelection(hero, 7, LMBPressed, false);
-				//item_skill_description(8, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
-
 			}
 			else if (mouseX >= 610 && mouseX <= 652 && mouseY >= 270 && mouseY <= 312)	// 3W-9S - skill nr 9
 			{
@@ -811,13 +685,9 @@ public:
 				position = LEFT;
 
 				ProceedSelection(hero, 8, LMBPressed, false);
-				//item_skill_description(9, mousex, mousey, potion_skill, y, font20, font12, 3, al_map_rgba(0, 0, 0, 245));
-
 			}
 			else 
-				overlayedSkillIndex = -1;
-		//}
-		
+				overlayedSkillIndex = -1;	
 	}
 
 	bool CheckButtons(int mouseX, int mouseY, Hero *hero, bool LMBPressed)
@@ -854,5 +724,30 @@ public:
 		selectedFromTab = false;
 		overlayDock = false;
 		position = NONE;
+	}
+
+	void DropPotions()
+	{
+		int result = 1 + rand() % 100;
+
+		if (result % 5 == 0)
+		{
+			skillList->at(1)->quantity += 1 + rand() % 5;
+			skillList->at(4)->quantity += 1 + rand() % 5;
+			skillList->at(7)->quantity += 1 + rand() % 5;
+		}
+		else if (result % 7 == 0)
+		{
+			skillList->at(2)->quantity += 1 + rand() % 2;
+			skillList->at(5)->quantity += 1 + rand() % 2;
+			skillList->at(8)->quantity += 1 + rand() % 2;
+		}
+		else
+		{
+			skillList->at(0)->quantity += 1 + rand() % 10;
+			skillList->at(3)->quantity += 1 + rand() % 10;
+			skillList->at(6)->quantity += 1 + rand() % 10;
+		}
+
 	}
 };

@@ -17,6 +17,7 @@ class Skill
 	short int flag;	// mo¿e byæ nie potrzebne dziêki u¿yciu RTTI
 	short int quantity; // dla mikstur
 	short int cooldown;
+	short int currentCooldown;
 
 	StatsSkill *stats; //struct Stats_EQ_MON *st;
 	ALLEGRO_BITMAP *bmp;
@@ -30,6 +31,7 @@ public:
 		flag = flag_;
 		quantity = quantity_;
 		cooldown = cooldown_;
+		currentCooldown = 0;
 
 		descriptionFrameX = descritptionFrameX_;
 		descriptionFrameY = descriptionFrameY_;
@@ -57,5 +59,7 @@ public:
 		description.erase(description.begin(), description.end());
 		al_destroy_bitmap(bmp);
 	}
+
 	friend class ManagerSkill;
+	friend class ManagerFight;
 };

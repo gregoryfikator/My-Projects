@@ -5,7 +5,9 @@
 
 class ALLEGRO_Font
 {
+	ALLEGRO_FONT *font10;
 	ALLEGRO_FONT *font12;
+	ALLEGRO_FONT *font14;
 	ALLEGRO_FONT *font18;
 	ALLEGRO_FONT *font20;
 	ALLEGRO_FONT *font40;
@@ -26,7 +28,9 @@ public:
 	ALLEGRO_Font();
 	~ALLEGRO_Font()
 	{
+		al_destroy_font(font10);
 		al_destroy_font(font12);
+		al_destroy_font(font14);
 		al_destroy_font(font18);
 		al_destroy_font(font20);
 		al_destroy_font(font40);
@@ -38,4 +42,5 @@ public:
 	friend class Manager;
 	friend class ManagerItem;
 	friend class ManagerSkill;
+	friend class ManagerFight;
 };

@@ -8,7 +8,9 @@ ALLEGRO_Font::ALLEGRO_Font()
 		//fprintf(stderr, "failed to initialize allegro image addon!\n");
 		delete this;
 
-	font12 = al_load_font("projekt\\Vecna.otf", 12, 0);
+	font10 = al_load_ttf_font("projekt\\Vecna.otf", 10, 0);
+	font12 = al_load_ttf_font("projekt\\Vecna.otf", 12, 0);
+	font14 = al_load_ttf_font("projekt\\Vecna.otf", 14, 0);
 	font18 = al_load_ttf_font("projekt\\Vecna.otf", 18, 0);
 	font20 = al_load_ttf_font("projekt\\Vecna.otf", 20, 0);
 	font40 = al_load_ttf_font("projekt\\Vecna.otf", 40, 0);

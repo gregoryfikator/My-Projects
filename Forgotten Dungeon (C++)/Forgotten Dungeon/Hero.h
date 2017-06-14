@@ -6,17 +6,18 @@
 
 class Hero :public Character
 {
+	ALLEGRO_BITMAP *heroAnimation[12];
 	ALLEGRO_BITMAP *heroPortrait;
 	bool heroClass;
-
-	StatsHero *heroStats;
+	
+	//int lvl;
 
 	Item *eq[20];
 	Item *eqWorn[7];
 	Skill *eqDock[6];
-
 	
 public:
+	StatsHero *heroStats;
 	Hero(string newName, bool newHeroClass, string newBMP, int startPointX, int startPointY, ALLEGRO_BITMAP *newHeroPortrait, bool loadGame) : Character(newName, newBMP, startPointX, startPointY)
 	{
 		for (int i = 0; i < 20; i++)
@@ -31,87 +32,28 @@ public:
 		heroClass = newHeroClass;
 		heroPortrait = newHeroPortrait;
 
-		//if(loadGame)
-		//{
-		//	string name; // char * nazwa;
-		//	vector <string>* description; // char *description[10];
-		//	short int descriptionLines;
-		//	short int descritptionFrameX; // int frame_x;
-		//	short int descriptionFrameY; // int frame_y;
+		heroAnimation[0] = al_create_sub_bitmap(GetBMP(), 0, 0, 32, 32);
+		heroAnimation[1] = al_create_sub_bitmap(GetBMP(), 32, 0, 32, 32);
+		heroAnimation[2] = al_create_sub_bitmap(GetBMP(), 64, 0, 32, 32);
 
-		//	short int ID;
-		//	short int flag;	// mo¿e byæ nie potrzebne dziêki u¿yciu RTTI
-		//	short int rarity;
-		//	short int lvl;
+		heroAnimation[3] = al_create_sub_bitmap(GetBMP(), 0, 32, 32, 32);
+		heroAnimation[4] = al_create_sub_bitmap(GetBMP(), 32, 32, 32, 32);
+		heroAnimation[5] = al_create_sub_bitmap(GetBMP(), 64, 32, 32, 32);
 
-		//	string pathFile = "saves//" + GetName() + ".sav";
+		heroAnimation[6] = al_create_sub_bitmap(GetBMP(), 0, 64, 32, 32);
+		heroAnimation[7] = al_create_sub_bitmap(GetBMP(), 32, 64, 32, 32);
+		heroAnimation[8] = al_create_sub_bitmap(GetBMP(), 64, 64, 32, 32);
 
-		//	float dmg_min;
-		//	float dmg_max;
+		heroAnimation[9] = al_create_sub_bitmap(GetBMP(), 0, 96, 32, 32);
+		heroAnimation[10] = al_create_sub_bitmap(GetBMP(), 32, 96, 32, 32);
+		heroAnimation[11] = al_create_sub_bitmap(GetBMP(), 64, 96, 32, 32);
 
-		//	unsigned int def;
-
-		//	float hp;	// punkty zdrowia
-		//	float emp;	// punkty energii lub many w zale¿noœci od klasy postaci
-
-		//	int str;
-		//	int dur;
-		//	int dex;
-		//	int agi;
-		//	int wis;
-		//	int chr;
-
-		//	//bmp = al_load_bitmap(bmpFile.c_str());
-		//	description = new vector<string>;
-		//	fstream File;
-		//	//stringstream ss;
-
-		//	File.open(pathFile.c_str(), ios::in);
-
-		//	if (File.good())
-		//	{
-		//		itemList = new list<Item *>;
-		//		while (File >> flag >> ID >> lvl >> rarity >> hp >> emp >> str >> dur >> dex >> agi >> wis >> chr >> dmg_min >> dmg_max >> def >> descritptionFrameX >> descriptionLines)
-		//		{
-		//			string tmp;
-
-		//			descriptionFrameY = 32 + 16 * descriptionLines;
-
-		//			getline(File, tmp);
-		//			getline(File, name);
-
-		//			for (int i = 0; i < descriptionLines; i++)
-		//			{
-		//				getline(File, tmp);
-		//				description->push_back(tmp);
-		//			}
-		//			ss << ID;
-		//			tmp = ss.str();
-		//			bmpPath = "data//item//bmp//" + tmp + ".png";
-		//			ss.str("");
-
-		//			
-		//			description = new vector<string>;
-		//		}
-		//		File.close();
-		//	}
-
-
-
-		//}
-		//else
-		//{
-			if (heroClass)
-			{
-				heroStats = new StatsHero(50, 25, 0, 2, 0, 30, 30, 25, 25, 25, 25, heroClass);
-			}
-			else
-			{
-				heroStats = new StatsHero(30, 50, 0, 2, 0, 25, 25, 25, 30, 35, 30, heroClass);
-			}
-		//}
-
+		if (heroClass)
+			heroStats = new StatsHero(50, 25, 0, 2, 0, 30, 30, 25, 25, 25, 25, 0, heroClass);
+		else
+			heroStats = new StatsHero(30, 50, 0, 2, 0, 25, 25, 25, 30, 35, 30, 0, heroClass);
 	}
+
 	virtual ~Hero()
 	{
 		delete heroStats;
@@ -122,11 +64,19 @@ public:
 		for(int i = 0; i < 7; i++)
 			if(eqWorn[i] != nullptr)
 				delete eqWorn[i];
+
+		for (int i = 0; i < 12; i++)
+			al_destroy_bitmap(heroAnimation[i]);
 	}
 
 	ALLEGRO_BITMAP * getPortrait()
 	{
 		return heroPortrait;
+	}
+
+	ALLEGRO_BITMAP * getHeroAnimationFrame(int index)
+	{
+		return heroAnimation[index];
 	}
 
 
@@ -155,6 +105,13 @@ public:
 	{
 		if (index >= 0 && index < 7)
 			return eqWorn[index];
+		return nullptr;
+	}
+
+	Skill * GetDockedSkill(int index)
+	{
+		if (index >= 0 && index < 7)
+			return eqDock[index];
 		return nullptr;
 	}
 

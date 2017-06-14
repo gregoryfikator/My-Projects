@@ -61,6 +61,7 @@ public:
 	int GetYPos() { return bmpYPos; }
 	void SetXPos(int XPosChange) { bmpXPos += XPosChange; }
 	void SetYPos(int YPosChange) { bmpYPos += YPosChange; }
+	void EscapeToStartPoint() { bmpXPos = 114; bmpYPos = 507; }
 
 	list<Obstacle *> * GetListHead() { return head; }
 	ALLEGRO_BITMAP * GetCurrentLocationBMP() { return BMP; }

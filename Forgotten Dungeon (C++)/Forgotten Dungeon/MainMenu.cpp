@@ -1,7 +1,7 @@
 #include "MainMenu.h"
 using namespace std;
 
-MainMenu::MainMenu(ALLEGRO_EVENT_QUEUE *event_queue_new, ALLEGRO_Font *allegro_font_new, ALLEGRO_BITMAP *background_, ALLEGRO_BITMAP *cursor_, ALLEGRO_BITMAP *heroWarrior_, ALLEGRO_BITMAP *heroWizzard_)
+MainMenu::MainMenu(ALLEGRO_EVENT_QUEUE *event_queue_new, ALLEGRO_Font *allegro_font_new, ALLEGRO_BITMAP *background_, ALLEGRO_BITMAP *cursor_, ALLEGRO_BITMAP *heroWarrior_, ALLEGRO_BITMAP *heroWizzard_, ALLEGRO_SAMPLE *soundtrack, ALLEGRO_SAMPLE_ID *soundtrackID)
 {
 	event_queue		= event_queue_new;
 	allegro_font	= allegro_font_new;
@@ -44,6 +44,8 @@ MainMenu::MainMenu(ALLEGRO_EVENT_QUEUE *event_queue_new, ALLEGRO_Font *allegro_f
 	mouseButtonPressedID = 0;
 	keyboardKeyPressedID = 0;
 	offSet = 0;
+
+	al_play_sample(soundtrack, 0.75, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, soundtrackID);
 }
 
 void MainMenu::DrawMenu()

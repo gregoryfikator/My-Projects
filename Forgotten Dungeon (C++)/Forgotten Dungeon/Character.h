@@ -16,14 +16,13 @@ class Character
 	ALLEGRO_BITMAP		*BMP;	// to be sprite
 	int		bmpX;
 	int		bmpY;
-
-	//Stats *stats;
+	bool	alive;
 
 public:
-	Character(string newName, string newBMP, int newX1, int newY1)
+	Character(string newName, string newBMP, int newX1, int newY1, int newLvl = 1)
 	{
 		name = newName;
-		lvl = 0;
+		lvl = newLvl;
 
 		BMP = al_load_bitmap(newBMP.c_str());
 		bmpX = al_get_bitmap_width(BMP);
@@ -34,8 +33,7 @@ public:
 
 		Y1 = newY1;
 		Y2 = Y1 + 32;
-
-		//stats = new Stats(hp_, emp_, dmg_min_, dmg_max_, def_, str_, dur_, dex_, agi_, wis_, chr_);
+		alive = true;
 	}
 	virtual ~Character()
 	{
@@ -61,7 +59,12 @@ public:
 
 	string GetName() { return name; }
 	int GetLevel() { return lvl; }
-	//Stats *GetStats() { return stats; }
+	void IncreaseLevel() { lvl++; }
+	bool CheckIfAlive() { return alive; }
+	void Kill() { alive = false; }
+	void Respawn() { alive = true; }
+
+	ALLEGRO_BITMAP *GetBMP() { return BMP; }
 
 	void DrawCharacter()
 	{

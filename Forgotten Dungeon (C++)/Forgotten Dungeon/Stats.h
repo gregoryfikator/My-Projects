@@ -43,7 +43,7 @@ public:
 class StatsHero : public Stats
 {
 public:
-	StatsHero(float hp_, float emp_, float dmg_min_, float dmg_max_, unsigned int def_, int str_, int dur_, int dex_, int agi_, int wis_, int chr_, bool heroClass): Stats(hp_, emp_, dmg_min_, dmg_max_, def_, str_, dur_, dex_, agi_, wis_, chr_)
+	StatsHero(float hp_, float emp_, float dmg_min_, float dmg_max_, unsigned int def_, int str_, int dur_, int dex_, int agi_, int wis_, int chr_, int exp_, bool heroClass): Stats(hp_, emp_, dmg_min_, dmg_max_, def_, str_, dur_, dex_, agi_, wis_, chr_)
 	{
 		str_eq = str_;
 		dur_eq = dur_;
@@ -51,6 +51,8 @@ public:
 		agi_eq = agi_;
 		wis_eq = wis_;
 		chr_eq = chr_;
+
+		exp = exp_;
 
 		// bazowe mno¿niki statystyk zale¿ne od klasy postaci
 		if (heroClass)
@@ -89,11 +91,38 @@ public:
 	float agi_b;
 	float wis_b;
 	float chr_b;
+
+	int exp;
 };
 
 class StatsSkill
 {
 public:
+	StatsSkill()
+	{
+		hp = 0;
+		hpRegen = 0;
+		hpRegenDuration = 0;
+
+		emp = 0;
+		empRegen = 0;
+		empRegenDuration = 0;
+
+		def = 0;
+		defMultipler = 0;
+		defMultiplerDuration = 0;
+
+		dmgGivenMultipler = 0;
+		dmgGivenMultiplerDuration = 0;
+		dmgTakenMultipler = 0;
+		dmgTakenMultiplerDuration = 0;
+		doubleStrikeChance = 0;
+		doubleStrikeDuration = 0;
+		bleedingChance = 0;
+		bleedingDuration = 0;
+		unblockable = false;
+		fallback = false;
+	}
 	StatsSkill(float hp_, float hpRegen_, short int hpRegenDuration_, float emp_, float empRegen_, short int empRegenDuration_, unsigned int def_, float defMultipler_, short int defMultiplerDuration_, float dmgGivenMultipler_, short int dmgGivenMultiplerDuration_, float dmgTakenMultipler_, short int dmgTakenMultiplerDuration_, float doubleStrikeChance_, short int doubleStrikeDuration_, float bleedingChance_, short int bleedingDuration_, bool unblockable_, bool fallback_)
 	{
 		hp = hp_;
