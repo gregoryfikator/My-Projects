@@ -1,10 +1,6 @@
 #pragma once
 #include "Item.h"
 
-/*
-dodac wewnatrz klas jakies w³aœciwoœci typowe dla danej klasy przedmiotu (?)
-*/
-
 class Weapon : public Item
 {
 

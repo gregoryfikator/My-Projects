@@ -86,7 +86,7 @@ void GameLoop::GameMenu()
 	{
 		mainmenu->DrawMainMenu();
 		mainmenu->GetEvents();
-		switch (mainmenu->ProceedEventsMainMenu())
+		switch (mainmenu->ProceedEventsMainMenu(&START_GAME))
 		{
 		case 0:
 			QUIT_GAME = true;
@@ -111,7 +111,7 @@ void GameLoop::GameMenu()
 			break;
 		}
 
-		if (START_GAME)
+		if (START_GAME && !PLAY_GAME)
 		{
 			if (LOAD_GAME)
 			{
@@ -141,10 +141,12 @@ void GameLoop::GameMenu()
 			}
 			if (START_GAME)
 				GamePlay();
+			else
+				PLAY_GAME = false;
 
 			START_GAME = false;
 			LOAD_GAME = false;
-			PLAY_GAME = false;
+			
 		}
 	} while (!QUIT_GAME);
 }
@@ -214,8 +216,17 @@ bool GameLoop::GamePlay()
 							{
 								// drop itemow, ++exp
 								hero->heroStats->exp += 10 * locationManager->GetEnemy()->GetLevel();
+
+								if (hero->heroStats->exp >= resources->experienceThreshold[hero->GetLevel() - 1])
+								{
+									hero->heroStats->exp = hero->heroStats->exp - resources->experienceThreshold[hero->GetLevel() - 1];
+									hero->IncreaseLevel();
+								}
+
 								itemManager->ChangeXPBarLength(hero->heroStats->exp, resources->experienceThreshold[hero->GetLevel() - 1]);
+
 								fightManager->EndFight();
+
 								if (rand() % 100 % 2 == 0)
 									hero->AssignNewItem(new Item(itemManager->DropItem()));
 
@@ -268,12 +279,6 @@ bool GameLoop::GamePlay()
 					}
 					else
 						openEquipment = false;
-
-					if (hero->heroStats->exp >= resources->experienceThreshold[hero->GetLevel() - 1])
-					{
-						hero->heroStats->exp = hero->heroStats->exp - resources->experienceThreshold[hero->GetLevel() - 1];
-						hero->IncreaseLevel();
-					}
 				}
 				else if (openSkillTab == true)
 				{

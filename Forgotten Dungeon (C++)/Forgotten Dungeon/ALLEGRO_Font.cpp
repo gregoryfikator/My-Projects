@@ -27,8 +27,14 @@ ALLEGRO_Font::ALLEGRO_Font()
 	TRANSPARENT_BLACK4 = al_map_rgba(0, 0, 0, 200);
 	TRANSPARENT_BLACK5 = al_map_rgba(0, 0, 0, 225);
 	TRANSPARENT_BLACK6 = al_map_rgba(0, 0, 0, 250);
+}
 
-	//if (!font12 || !font18 || !font20)
-	//if (!font12)
-	//	delete this;
+ALLEGRO_Font::~ALLEGRO_Font()
+{
+	al_destroy_font(font10);
+	al_destroy_font(font12);
+	al_destroy_font(font14);
+	al_destroy_font(font18);
+	al_destroy_font(font20);
+	al_destroy_font(font40);
 }

@@ -5,9 +5,7 @@ class Obstacle
 	int		X1;
 	int		Y1;
 	int		X2;
-	int		Y2;
-
-	
+	int		Y2;	
 
 public:
 	Obstacle(int newX1, int newY1, int newX2, int newY2)

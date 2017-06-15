@@ -1,0 +1,1 @@
+ID_ >> rarity_ >> hp_ >> emp_ >> str_ >> dur_ >> dex_ >> agi_ >> wis_ >> chr_ >> dmg_min_ >> dmg_max_ >> def_ >> lvl_ >> newX1 >> newY1

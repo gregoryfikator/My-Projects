@@ -48,6 +48,25 @@ MainMenu::MainMenu(ALLEGRO_EVENT_QUEUE *event_queue_new, ALLEGRO_Font *allegro_f
 	al_play_sample(soundtrack, 0.75, 0.0, 1.0, ALLEGRO_PLAYMODE_ONCE, soundtrackID);
 }
 
+MainMenu::~MainMenu()
+{
+	for (int i = 0; i < 6; i++)
+		if (mainMenuButton[i] != nullptr)
+			delete mainMenuButton[i];
+
+	for (int i = 0; i < 4; i++)
+		if (characterSelectionMenuButton[i] != nullptr)
+			delete characterSelectionMenuButton[i];
+
+	if (characterNameMenuButton != nullptr)
+		delete characterNameMenuButton;
+
+	al_destroy_bitmap(background);
+	al_destroy_bitmap(cursor);
+	al_destroy_bitmap(heroWarrior);
+	al_destroy_bitmap(heroWizard);
+}
+
 void MainMenu::DrawMenu()
 {
 	// BACKGROUND
@@ -98,7 +117,7 @@ void MainMenu::GetEvents()
 		keyboardKeyPressedID = ev.keyboard.keycode;
 }
 
-int MainMenu::ProceedEventsMainMenu()
+int MainMenu::ProceedEventsMainMenu(bool *START_GAME)
 {
 	if (mouseX >= buttonPanelX1 && mouseX <= buttonPanelX2 && mouseY >= buttonPanelY1 && mouseY <= buttonPanelY2)
 	{
@@ -125,7 +144,13 @@ int MainMenu::ProceedEventsMainMenu()
 		keyboardKeyPressedID = 0;
 
 		if (focusedButton->CompareLabel("New Game"))
-			return 1;
+		{
+			if (*START_GAME == false)
+				return 1;
+
+			*START_GAME = false;
+			return 0;
+		}
 		if (focusedButton->CompareLabel("Load Game"))
 			return 2;
 		if (focusedButton->CompareLabel("Options"))

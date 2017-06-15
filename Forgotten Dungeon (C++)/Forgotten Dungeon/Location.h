@@ -16,53 +16,17 @@ class Location
 	list<Obstacle *> *head;
 
 public:
-	Location(string bmpFile, string obstacleFile)
-	{
-		int obsX1, obsY1, obsX2, obsY2;
+	Location(string bmpFile, string obstacleFile);
+	~Location();
 
-		BMP = al_load_bitmap(bmpFile.c_str());
-		bmpXPos = 114;
-		bmpYPos = 507;
+	void DrawCurrentLocation();
 
-		fstream File;
-		File.open(obstacleFile.c_str(), ios::in);
+	int GetXPos();
+	int GetYPos();
+	void SetXPos(int XPosChange);
+	void SetYPos(int YPosChange);
+	void EscapeToStartPoint();
 
-		if (File.good())
-		{
-			head = new list<Obstacle *>;
-			while (File >> obsX1 >> obsY1 >> obsX2 >> obsY2)
-			{
-				head->push_back(new Obstacle(obsX1, obsY1, obsX2, obsY2));
-			}
-
-			File.close();
-		}
-
-	}
-	~Location()
-	{
-		while (!(head)->empty())
-		{
-			Obstacle* element = (head)->front();
-			(head)->pop_front();
-			delete element;
-		}
-		delete head;
-
-		al_destroy_bitmap(BMP);
-	}
-
-	void DrawCurrentLocation()
-	{
-		al_draw_bitmap_region(this->BMP, bmpXPos, bmpYPos, 720, 480, 0, 0, 0);
-	}
-
-	int GetXPos() { return bmpXPos; }
-	int GetYPos() { return bmpYPos; }
-	void SetXPos(int XPosChange) { bmpXPos += XPosChange; }
-	void SetYPos(int YPosChange) { bmpYPos += YPosChange; }
-	void EscapeToStartPoint() { bmpXPos = 114; bmpYPos = 507; }
-
-	list<Obstacle *> * GetListHead() { return head; }
-	ALLEGRO_BITMAP * GetCurrentLocationBMP() { return BMP; }
+	list<Obstacle *> * GetListHead();
+	ALLEGRO_BITMAP * GetCurrentLocationBMP();
 };
