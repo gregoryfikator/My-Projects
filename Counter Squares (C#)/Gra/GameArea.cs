@@ -23,6 +23,10 @@ namespace Gra
         Button selectedButton;
         Brush selectedButtonBrush;
 
+        int ScoreBaseWhenColorEquals = 50;
+        int ScoreMultiplerWhenColorEquals = 5;
+        int ScoreBaseWhenColorNotEquals = 25;
+
         public class SolidColorBrushComparer : IEqualityComparer<SolidColorBrush>
         {
             public bool Equals(SolidColorBrush x, SolidColorBrush y)
@@ -55,7 +59,7 @@ namespace Gra
                 {
                     gameField[i, j] = new GameField();
                     gameField[i, j].SetField(random.Next(11).ToString(), random.Next(3));
-                    gameField[i, j].GetField().Click += SelectClickedButton;
+                    gameField[i, j].GetField().Click += ProceedButtonClick;
                 }
         }
 
@@ -76,45 +80,51 @@ namespace Gra
             return gameField[i,j];
         }
 
-        public void SelectClickedButton(object sender, RoutedEventArgs e)
+        public void ProceedButtonClick(object sender, RoutedEventArgs e)
         {
+            Button sended = (Button)sender;
             if (selectedButton == null)
-            {               
-                selectedButton = (Button)sender;
-                ChangeButtonForegroundToSelected();
-            }
-            else if (selectedButton == sender)
-            {
-                ChangeButtonForegroundToDefault();
-                selectedButton = null;                
-            }
+                SelectButton(sended);
+            else if (!CompareSelectedWithClickedButtonValue(sended) || selectedButton == sended)
+                DeselectButton();
             else
-            {
-                if (CompareButtonsValue((Button)sender))
-                {
-                    Button sended = (Button)sender;
-
-                    if (CompareBrushes(sended))
-                        player.AddScore(50 + (5 * int.Parse(selectedButton.Content.ToString())));
-                    else
-                        player.AddScore(25 + (int.Parse(selectedButton.Content.ToString())));
-
-                    selectedButton.Visibility = Visibility.Hidden;
-                    ChangeButtonForegroundToDefault();
-                    selectedButton = null;
-                  
-                    sended.Visibility = Visibility.Hidden;
-                    sended = null;
-                }
-                else
-                {
-                    ChangeButtonForegroundToDefault();
-                    selectedButton = null;                  
-                }
-            }
+                MatchFounded(sended);
         }
 
-        private bool CompareButtonsValue(Button comparedButton)
+        private void SelectButton(Button clickedButton)
+        {
+            selectedButton = clickedButton;
+            ChangeButtonForegroundToSelected();
+        }
+
+        private void DeselectButton()
+        {
+            ChangeButtonForegroundToDefault();
+            selectedButton = null;
+        }
+
+        private void MatchFounded(Button sended)
+        {
+            AddPoints(sended);
+            HideMatchedButtons(sended);
+            DeselectButton();
+        }
+
+        private void AddPoints(Button sended)
+        {
+            if (CompareBrushes(sended))
+                player.AddScore(ScoreBaseWhenColorEquals + (ScoreMultiplerWhenColorEquals * int.Parse(selectedButton.Content.ToString())));
+            else
+                player.AddScore(ScoreBaseWhenColorNotEquals + (int.Parse(selectedButton.Content.ToString())));
+        }
+
+        private void HideMatchedButtons(Button sended)
+        {
+            sended.Visibility = Visibility.Hidden;
+            selectedButton.Visibility = Visibility.Hidden;            
+        }
+
+        private bool CompareSelectedWithClickedButtonValue(Button comparedButton)
         {
             return selectedButton.Content.ToString().Equals(comparedButton.Content.ToString());
         }
@@ -139,12 +149,12 @@ namespace Gra
             BrushConverter bc = new BrushConverter();
             selectedButtonBrush = selectedButton.Background.CloneCurrentValue();
 
-            if (CompareSelectedBrushWithColor("#FF800000"))
+            if (CompareSelectedBrushWithColor("#80A00000"))
                 selectedButton.Background = (SolidColorBrush)bc.ConvertFrom("#FFFF0000");
-            else if (CompareSelectedBrushWithColor("#FF008000"))
+            else if (CompareSelectedBrushWithColor("#8000A000"))
                 selectedButton.Background = (SolidColorBrush)bc.ConvertFrom("#FF00FF00");
-            else if (CompareSelectedBrushWithColor("#FF000080"))
-                selectedButton.Background = (SolidColorBrush)bc.ConvertFrom("#FF0000FF");
+            else if (CompareSelectedBrushWithColor("#800020FF"))
+                selectedButton.Background = (SolidColorBrush)bc.ConvertFrom("#FF0020FF");
         }
 
         public bool CheckNoMoveLeft()

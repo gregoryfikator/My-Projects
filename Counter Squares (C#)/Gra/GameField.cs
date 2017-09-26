@@ -37,11 +37,11 @@ namespace Gra
             BrushConverter bc = new BrushConverter();
 
             if (randomNumberValueAsColor == 0)
-                field.Background = (Brush)bc.ConvertFrom("#FF800000");
+                field.Background = (Brush)bc.ConvertFrom("#80A00000");
             else if (randomNumberValueAsColor == 1)
-                field.Background = (Brush)bc.ConvertFrom("#FF008000");
+                field.Background = (Brush)bc.ConvertFrom("#8000A000");
             else if (randomNumberValueAsColor == 2)
-                field.Background = (Brush)bc.ConvertFrom("#FF000080");
+                field.Background = (Brush)bc.ConvertFrom("#800020FF");
         }
 
         public void SetOnBoard(int i, int j)
@@ -54,9 +54,5 @@ namespace Gra
         {
             return field;
         }
-
-
-
-
     }
 }
