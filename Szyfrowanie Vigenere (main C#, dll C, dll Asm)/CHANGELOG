@@ -1,0 +1,104 @@
+﻿CHANGELOG
+
+  ///////////////////////
+ // 08/11/2017 - V0.1 //
+///////////////////////
+
+    - utworzono GUI:
+        a) kontrolki do wybierania pliku wejściowego i wynikowego (nie zaimplementowano do nich logiki)
+        b) kontrolki odpowiedzialne za wybór biblioteki DLL oraz trybu pracy programu
+        c) slider do wyboru ilości wykorzystywanych wątków
+        d) guzik do przeprowadzenia testowego działania z wybranej biblioteki DLL razem z polami wyświetlającymi wynik
+
+    - utworzono i połączono testowe biblioteki .dll z głównym programem
+
+
+  ////////////////////////
+ // 19/11/2017 - V0.11 //
+////////////////////////
+
+    - zaimplementowano obsługę wątków:
+	a) równoległy odczyt danych z pliku do buforów
+	b) równoległy zapis danych z buforów do wielu plików
+
+    - dodano scalanie plików wynikowych
+
+
+  ////////////////////////
+ // 05/12/2017 - V0.2  //
+////////////////////////
+
+    - utworzono klasę VigenereConverter wraz z podstawowymi metodami
+    - poprawiono odczyt danych z pliku (zgodnie z zaleceniem teraz odpowiada za to jeden watek)
+    - zaimplementowano mechanizm dzielący bufor na mniejsze i przydzielający je wątkom
+
+
+  ////////////////////////
+ // 18/12/2017 - V0.3  //
+////////////////////////
+
+    	- Poprawki dot. GUI:
+		a) usunięcie zbędnych kontrolek
+		b) implementacja mechanizmu odmierzającego czas wykonania programu i funkcji bibliotecznych
+		c) implementacja wyboru katalogu dla pliku wynikowego
+		d) poprawki skalowania widoku
+
+	- Klasa VigenereConverter:
+		a) poprawki metod odpowiedzialnych za wczytywanie i zapis plików w zależności 
+	od wybranego trybu (szyfrowanie/deszyfrowanie) dobór odpowiedniego enkodowania pliku tekstowego.
+		b) dodanie wielu zmiennych pomocnicznych
+		c) pomiar czasu wykonania funkcji bibliotecznych
+
+	- Implementacja funkcji szyfrującej i deszyfrującej w bibliotece DLL w języku C
+	- Wstępne zdefiniowanie funkcji szyfr. i deszyfr. w Asemblerze 
+
+  ////////////////////////
+ // 09/02/2018 - V0.8  //
+////////////////////////
+
+    	- GUI:
+		a) dodano pasek postępu szyfrowania pliku
+
+	- Klasa VigenereConverter:
+		a) zmieniono sposób przydzielania danych dla wątków - dane sa dzielone tak, że każdy wątek otrzymuje
+	jako pierwszą literę szyfrującą zawsze pierwszą literę klucza, pozwala to ominąć kłopotliwe obliczanie offsetów
+		b) posprzątano kod, usunięto zakomentowane fragmenty
+		c) dodano mechanizm delegata umożliwiający odświeżania paska postępu w GUI
+
+	- Biblioteka C:
+		a) posprzątano kod, usunięto zakomentowane fragmenty
+
+	- Zaimplementowano i wstępnie przetestowano funkcje szyfrującą i deszyfrującą w bibliotece DLL w Asemblerze - narazie bez wykorzystania XMM
+
+  ////////////////////////
+ // 12/02/2018 - V0.9  //
+////////////////////////
+
+    	- GUI:
+		a) ograniczono maksymalną długość klucza szyfrującego
+
+	- Klasa VigenereConverter:
+		a) zoptymalizowano operacje wczytywania i zapisywnia danych do pliku
+		b) usunięto pozostałości po offsecie klucza szyfrującego
+
+	- Biblioteka C:
+		a) wykonano niedużą optymalizację funkcji szyfrującej
+		b) usunięto offset klucza szyfrujacego z argumentów funkcji
+
+	- Biblioteka Assembler:
+		a) wprowadzono wykorzystanie rejestrów MMX, nie jak pierwotnie zakładano XMM
+		b) usunięto offset klucza szyfrujacego z argumentów funkcji
+
+	- Dokładne testy bibliotek w wersji release na dwóch maszynach
+
+  ////////////////////////
+ // 12/02/2018 - V1.0  //
+////////////////////////
+
+	- Biblioteka ASM:
+		a) dodano odkładanie na stos zawartości rejestrów po wejściu do procedury oraz
+	przywracanie ich przed zakończeniem procedury
+
+	- Oddano program do oceny
+
+		

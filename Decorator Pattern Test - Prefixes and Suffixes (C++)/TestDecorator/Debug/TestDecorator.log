@@ -1,0 +1,3 @@
+﻿  Source.cpp
+c:\users\gregor\desktop\programowanie\source\repos\pk4\testdecorator\testdecorator\source.cpp(10): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  TestDecorator.vcxproj -> C:\Users\Gregor\Desktop\Programowanie\Source\Repos\PK4\TestDecorator\Debug\TestDecorator.exe

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" 
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    
+    
+    <context-param>
+        <param-name>dbUser</param-name>
+        <param-value>gregor</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>dbPassword</param-name>
+        <param-value>password</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>dbURL</param-name>
+        <param-value>jdbc:derby://localhost:1527/conversionHistory</param-value>
+    </context-param>
+       
+    <servlet>
+        <servlet-name>ConverterServlet</servlet-name>
+        <servlet-class>com.gregorczuk.romantoarabic.servlets.ConverterServlet</servlet-class>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>ResultsServlet</servlet-name>
+        <servlet-class>com.gregorczuk.romantoarabic.servlets.ResultsServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>ConverterServlet</servlet-name>
+        <url-pattern>/ConverterServlet</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>ResultsServlet</servlet-name>
+        <url-pattern>/ResultsServlet</url-pattern>
+    </servlet-mapping>
+    
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    
+</web-app>
