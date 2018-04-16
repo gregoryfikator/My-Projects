@@ -1,0 +1,28 @@
+﻿<Window x:Name="gameWindow" x:Class="Gra.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Gra.Views"
+        xmlns:view="clr-namespace:Gra.Views"
+        xmlns:viewmodel="clr-namespace:Gra.ViewModels"
+        xmlns:resx="clr-namespace:Gra.Resources"
+        mc:Ignorable="d"
+        Title="{x:Static resx:Strings.GameTitle}" 
+        Height="720" Width="1280" 
+        WindowStartupLocation="CenterScreen" 
+        ResizeMode="CanResizeWithGrip">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type viewmodel:MainMenuViewModel}">
+            <view:MainMenuView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodel:GameBoardViewModel}">
+            <view:GameBoardView/>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <ContentControl Content="{Binding CurrentView}"/>
+    </Grid>
+</Window>

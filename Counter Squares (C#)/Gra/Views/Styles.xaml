@@ -1,0 +1,160 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Gra.View"
+                    xmlns:utility="clr-namespace:Gra.Utilities">
+
+    <utility:StyleConverter x:Key="StyleConverter"/>
+    <utility:LinearGradientConverter x:Key="LinearGradientConverter"/>
+
+    <LinearGradientBrush x:Key="redGradient" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="Red" Offset="0"/>
+        <GradientStop Color="#FFC90000" Offset="0.2"/>
+        <GradientStop Color="#FFC90000" Offset="0.8"/>
+        <GradientStop Color="Red" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="greenGradient" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FF009E00" Offset="0"/>
+        <GradientStop Color="Green" Offset="0.2"/>
+        <GradientStop Color="Green" Offset="0.8"/>
+        <GradientStop Color="#FF009E00" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="blueGradient" EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FF0023FF" Offset="0"/>
+        <GradientStop Color="#FF0017FF" Offset="0.2"/>
+        <GradientStop Color="#FF0017FF" Offset="0.8"/>
+        <GradientStop Color="#FF0023FF" Offset="1"/>
+    </LinearGradientBrush>
+
+    <GradientStopCollection x:Key="borderButtonGradientStops">
+        <GradientStop Color="LightBlue" Offset="0"/>
+        <GradientStop Color="LightBlue" Offset="0.04999"/>
+        <GradientStop Color="Gold" Offset="0.05"/>
+        <GradientStop Color="Gold" Offset="0.09999"/>
+
+        <GradientStop Color="LightBlue" Offset="0.1"/>
+        <GradientStop Color="LightBlue" Offset="0.14999"/>
+        <GradientStop Color="Gold" Offset="0.15"/>
+        <GradientStop Color="Gold" Offset="0.19999"/>
+
+        <GradientStop Color="LightBlue" Offset="0.2"/>
+        <GradientStop Color="LightBlue" Offset="0.24999"/>
+        <GradientStop Color="Gold" Offset="0.25"/>
+        <GradientStop Color="Gold" Offset="0.29999"/>
+
+        <GradientStop Color="LightBlue" Offset="0.3"/>
+        <GradientStop Color="LightBlue" Offset="0.34999"/>
+        <GradientStop Color="Gold" Offset="0.35"/>
+        <GradientStop Color="Gold" Offset="0.39999"/>
+
+        <GradientStop Color="LightBlue" Offset="0.4"/>
+        <GradientStop Color="LightBlue" Offset="0.44999"/>
+        <GradientStop Color="Gold" Offset="0.45"/>
+        <GradientStop Color="Gold" Offset="0.49999"/>
+
+        <GradientStop Color="LightBlue" Offset="0.5"/>
+        <GradientStop Color="LightBlue" Offset="0.54999"/>
+        <GradientStop Color="Gold" Offset="0.55"/>
+        <GradientStop Color="Gold" Offset="0.59999"/>
+
+        <GradientStop Color="LightBlue" Offset="0.6"/>
+        <GradientStop Color="LightBlue" Offset="0.64999"/>
+        <GradientStop Color="Gold" Offset="0.65"/>
+        <GradientStop Color="Gold" Offset="0.69999"/>
+
+        <GradientStop Color="LightBlue" Offset="0.7"/>
+        <GradientStop Color="LightBlue" Offset="0.74999"/>
+        <GradientStop Color="Gold" Offset="0.75"/>
+        <GradientStop Color="Gold" Offset="0.79999"/>
+
+        <GradientStop Color="LightBlue" Offset="0.8"/>
+        <GradientStop Color="LightBlue" Offset="0.84999"/>
+        <GradientStop Color="Gold" Offset="0.85"/>
+        <GradientStop Color="Gold" Offset="0.89999"/>
+
+        <GradientStop Color="LightBlue" Offset="0.9"/>
+        <GradientStop Color="LightBlue" Offset="0.94999"/>
+        <GradientStop Color="Gold" Offset="0.95"/>
+        <GradientStop Color="Gold" Offset="1"/>
+    </GradientStopCollection>
+
+    <LinearGradientBrush x:Key="borderGradient" StartPoint="0, 0" EndPoint="1,1" GradientStops="{StaticResource borderButtonGradientStops}"/>
+
+    <Style x:Key="mainMenuButtonStyle" TargetType="Button">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Width" Value="360"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="FontFamily" Value="KaiTi"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Canvas.Left" Value="215"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Name="border" 
+                            BorderThickness="2"
+                            Padding="4,2" 
+                            BorderBrush="#FF707070" 
+                            CornerRadius="3" 
+                            Background="#FF515151">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter TargetName="border" Property="BorderBrush">
+                                <Setter.Value>
+                                    <MultiBinding Converter="{StaticResource LinearGradientConverter}">
+                                        <MultiBinding.Bindings>
+                                            <Binding RelativeSource="{RelativeSource Self}"/>
+                                            <Binding Path="ColorGradientString"/>
+                                        </MultiBinding.Bindings>
+                                    </MultiBinding>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="gameFieldButtonStyle" TargetType="Button">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Width" Value="80"/>
+        <Setter Property="Height" Value="80"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="FontFamily" Value="KaiTi"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Name="border" 
+                            BorderThickness="3"
+                            Padding="0" 
+                            BorderBrush="#FF707070" 
+                            CornerRadius="3" 
+                            Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource borderGradient}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
